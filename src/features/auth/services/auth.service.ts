@@ -24,12 +24,19 @@ export const authService = {
    * @ai-context Authenticates user with email and password
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<AuthResponse>>(
+    const response = await apiClient.post<ApiResponse<any>>(
       API_ENDPOINTS.AUTH.LOGIN,
       credentials
     );
 
-    const { user, tokens } = response.data.data;
+    const data = response.data.data;
+    const user = data.user;
+    const tokens = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      token_type: data.token_type || 'Bearer',
+      expires_in: data.expires_in || 3600,
+    };
     setAuthTokens(tokens.access_token, tokens.refresh_token);
 
     return { user, tokens };
@@ -38,13 +45,20 @@ export const authService = {
   /**
    * @ai-context Registers a new user account
    */
-  async register(data: RegisterData): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<AuthResponse>>(
+  async register(registerData: RegisterData): Promise<AuthResponse> {
+    const response = await apiClient.post<ApiResponse<any>>(
       API_ENDPOINTS.AUTH.REGISTER,
-      data
+      registerData
     );
 
-    const { user, tokens } = response.data.data;
+    const data = response.data.data;
+    const user = data.user;
+    const tokens = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      token_type: data.token_type || 'Bearer',
+      expires_in: data.expires_in || 3600,
+    };
     setAuthTokens(tokens.access_token, tokens.refresh_token);
 
     return { user, tokens };

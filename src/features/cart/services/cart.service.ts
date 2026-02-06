@@ -68,9 +68,9 @@ class CartService {
   /**
    * Remove applied coupon
    */
-  async removeCoupon(): Promise<Cart> {
+  async removeCoupon(couponCode: string): Promise<Cart> {
     const response = await apiClient.delete<CartResponse>(
-      API_ENDPOINTS.CART.REMOVE_COUPON
+      API_ENDPOINTS.CART.REMOVE_COUPON(couponCode)
     );
     return response.data.data;
   }

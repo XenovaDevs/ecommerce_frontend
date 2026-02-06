@@ -1,10 +1,17 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Truck, Shield, CreditCard, Headphones } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Truck, Shield, CreditCard, Headphones, Layers } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { ROUTES, APP_CONFIG } from '@/constants';
+import { ProductCard, productsService } from '@/features/products';
+import { useCart } from '@/features/cart';
+import type { Product, Category } from '@/features/products';
 
 /**
- * @ai-context Home page with hero section, features, and categories.
+ * @ai-context Home page with hero section, features, featured products and categories.
  */
 
 const features = [
@@ -29,6 +36,124 @@ const features = [
     description: 'Estamos para ayudarte',
   },
 ];
+
+function FeaturedProducts() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { addItem } = useCart();
+
+  useEffect(() => {
+    productsService
+      .getFeaturedProducts(4)
+      .then(setProducts)
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const handleAddToCart = async (product: Product) => {
+    try {
+      await addItem({ product_id: product.id, quantity: 1 });
+    } catch {}
+  };
+
+  if (isLoading) {
+    return (
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
+            <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl animate-shimmer" />
+            <div className="mt-4 space-y-2">
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
+              <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (products.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+      {products.map((product, i) => (
+        <div key={product.id} className="animate-slide-up" style={{ animationDelay: `${i * 0.05}s` }}>
+          <ProductCard product={product} onAddToCart={handleAddToCart} />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function CategoriesSection() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    productsService
+      .getCategories()
+      .then((cats) => setCategories(cats.slice(0, 6)))
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="aspect-square animate-pulse rounded-xl bg-gray-200" />
+        ))}
+      </div>
+    );
+  }
+
+  if (categories.length === 0) return null;
+
+  return (
+    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      {categories.map((category, i) => (
+        <CategoryCard key={category.id} category={category} index={i} />
+      ))}
+    </div>
+  );
+}
+
+function CategoryCard({ category, index }: { category: Category; index: number }) {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <Link
+      href={ROUTES.CATEGORY_DETAIL(category.slug)}
+      className="group relative flex flex-col items-center overflow-hidden rounded-xl border border-gray-100 bg-white p-4 text-center transition-all duration-300 hover:shadow-lg hover-lift animate-slide-up"
+      style={{ animationDelay: `${index * 0.05}s` }}
+    >
+      <div className="relative mb-3 h-20 w-20 overflow-hidden rounded-full bg-gradient-to-br from-gray-50 to-gray-100">
+        {category.image_url && !imageError ? (
+          <Image
+            src={category.image_url}
+            alt={category.name}
+            fill
+            sizes="80px"
+            className="object-cover transition-transform duration-300 group-hover:scale-110"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center">
+            <Layers className="h-8 w-8 text-gray-300" />
+          </div>
+        )}
+      </div>
+      <h3 className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors">
+        {category.name}
+      </h3>
+      {category.products_count !== undefined && (
+        <p className="mt-1 text-xs text-gray-500">
+          {category.products_count} productos
+        </p>
+      )}
+    </Link>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -82,7 +207,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products Placeholder */}
+      {/* Featured Products */}
       <section className="py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -97,35 +222,26 @@ export default function HomePage() {
               <ArrowRight className="ml-1 h-4 w-4" />
             </Link>
           </div>
-
-          {/* Product grid placeholder */}
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square animate-pulse rounded-xl bg-gray-200"
-              />
-            ))}
-          </div>
+          <FeaturedProducts />
         </div>
       </section>
 
-      {/* Categories Placeholder */}
+      {/* Categories */}
       <section className="bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-2xl font-bold text-gray-900">
-            Explora por categoría
-          </h2>
-
-          {/* Categories grid placeholder */}
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="aspect-square animate-pulse rounded-xl bg-gray-200"
-              />
-            ))}
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Explora por categoría
+            </h2>
+            <Link
+              href={ROUTES.CATEGORIES}
+              className="flex items-center text-sm font-medium text-primary hover:underline"
+            >
+              Ver todas
+              <ArrowRight className="ml-1 h-4 w-4" />
+            </Link>
           </div>
+          <CategoriesSection />
         </div>
       </section>
 

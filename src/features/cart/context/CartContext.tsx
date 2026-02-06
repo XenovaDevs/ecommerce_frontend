@@ -200,15 +200,17 @@ export function CartProvider({ children }: CartProviderProps) {
 
   // Remove coupon
   const removeCoupon = useCallback(async () => {
+    if (!coupon) return;
+
     try {
-      const cart = await cartService.removeCoupon();
+      const cart = await cartService.removeCoupon(coupon.code);
       setCoupon(null);
       setTotals(cart.totals);
     } catch (err) {
       setError('Error al remover cupón');
       throw err;
     }
-  }, []);
+  }, [coupon]);
 
   const value: CartContextType = {
     items,

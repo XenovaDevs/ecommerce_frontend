@@ -39,14 +39,14 @@ export const API_ENDPOINTS = {
     ADD_ITEM: '/cart/items',
     UPDATE_ITEM: (itemId: string) => `/cart/items/${itemId}`,
     REMOVE_ITEM: (itemId: string) => `/cart/items/${itemId}`,
-    CLEAR: '/cart/clear',
-    APPLY_COUPON: '/cart/coupon',
-    REMOVE_COUPON: '/cart/coupon',
+    CLEAR: '/cart',
+    APPLY_COUPON: '/cart/coupons',
+    REMOVE_COUPON: (couponCode: string) => `/cart/coupons/${couponCode}`,
   },
 
   // Checkout endpoints
   CHECKOUT: {
-    PROCESS: '/checkout/process',
+    PROCESS: '/checkout',
     VALIDATE: '/checkout/validate',
     SHIPPING_QUOTE: '/shipping/quote',
     PAYMENT_PREFERENCE: '/checkout/payment-preference',
@@ -54,20 +54,20 @@ export const API_ENDPOINTS = {
 
   // Orders endpoints
   ORDERS: {
-    LIST: '/orders',
-    DETAIL: (id: string) => `/orders/${id}`,
-    CANCEL: (id: string) => `/orders/${id}/cancel`,
-    TRACK: (id: string) => `/orders/${id}/track`,
+    LIST: '/customer/orders',
+    DETAIL: (id: string) => `/customer/orders/${id}`,
+    CANCEL: (id: string) => `/customer/orders/${id}/cancel`,
+    TRACK: (trackingNumber: string) => `/shipping/track/${trackingNumber}`,
   },
 
   // User/Account endpoints
   USER: {
-    PROFILE: '/user/profile',
-    UPDATE_PROFILE: '/user/profile',
-    ADDRESSES: '/user/addresses',
-    ADDRESS_CREATE: '/user/addresses',
-    ADDRESS_UPDATE: (id: string) => `/user/addresses/${id}`,
-    ADDRESS_DELETE: (id: string) => `/user/addresses/${id}`,
+    PROFILE: '/customer/profile',
+    UPDATE_PROFILE: '/customer/profile',
+    ADDRESSES: '/customer/addresses',
+    ADDRESS_CREATE: '/customer/addresses',
+    ADDRESS_UPDATE: (id: string) => `/customer/addresses/${id}`,
+    ADDRESS_DELETE: (id: string) => `/customer/addresses/${id}`,
   },
 
   // Webhooks (for reference)

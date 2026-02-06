@@ -8,6 +8,7 @@ import { Button } from '@/components/ui';
 import { ROUTES, APP_CONFIG } from '@/constants';
 import { UIMessages } from '@/messages';
 import { useAuth } from '@/features/auth';
+import { useCart } from '@/features/cart';
 import { Navigation } from './Navigation';
 import { UserMenu } from './UserMenu';
 
@@ -31,8 +32,9 @@ import { UserMenu } from './UserMenu';
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, user, isLoading } = useAuth();
+  const { itemCount } = useCart();
 
-  const cartItemsCount = 0; // TODO: Get from cart context
+  const cartItemsCount = itemCount;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-sage-gray-200 bg-sage-white/95 backdrop-blur-md transition-sophisticated">
