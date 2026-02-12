@@ -4,14 +4,14 @@ import { MapPin, Truck, CreditCard, ShoppingBag } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
 import { formatCurrency } from '@/lib/utils';
 import { useCart } from '@/features/cart';
-import type { ShippingAddress, ShippingOption, PaymentMethod } from '../types';
+import type { ShippingAddressForm, ShippingOption, PaymentMethod } from '../types';
 
 /**
  * @ai-context Review step showing order summary before confirmation.
  */
 
 interface ReviewStepProps {
-  shippingAddress: ShippingAddress;
+  shippingAddress: ShippingAddressForm;
   shippingOption: ShippingOption;
   paymentMethod: PaymentMethod;
   onConfirm: () => void;

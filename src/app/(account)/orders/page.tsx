@@ -19,7 +19,7 @@ const statusConfig: Record<
 > = {
   pending: { label: 'Pendiente', variant: 'warning' },
   processing: { label: 'Procesando', variant: 'default' },
-  paid: { label: 'Pagado', variant: 'success' },
+  confirmed: { label: 'Confirmado', variant: 'success' },
   shipped: { label: 'Enviado', variant: 'default' },
   delivered: { label: 'Entregado', variant: 'success' },
   cancelled: { label: 'Cancelado', variant: 'danger' },
@@ -130,7 +130,7 @@ export default function OrdersPage() {
                       <div className="mt-3 space-y-1">
                         {order.items.slice(0, 2).map((item) => (
                           <p key={item.id} className="text-sm text-gray-700">
-                            {item.quantity}x {item.product_name}
+                            {item.quantity}x {item.name}
                           </p>
                         ))}
                         {order.items.length > 2 && (
@@ -146,7 +146,7 @@ export default function OrdersPage() {
                       <div className="text-right">
                         <p className="text-sm text-gray-600 mb-1">Total</p>
                         <p className="text-xl font-bold text-primary">
-                          {formatCurrency(order.totals.total)}
+                          {formatCurrency(order.total)}
                         </p>
                       </div>
                       <ChevronRight className="h-5 w-5 text-gray-400 mt-4" />

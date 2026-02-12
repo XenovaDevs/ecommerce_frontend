@@ -1,21 +1,38 @@
 /**
  * @ai-context Checkout-related types for the ecommerce frontend.
+ *             Types aligned with backend API responses.
  */
 
 export type CheckoutStep = 'shipping' | 'payment' | 'review';
 
 export type OrderStatus =
   | 'pending'
+  | 'confirmed'
   | 'processing'
-  | 'paid'
   | 'shipped'
   | 'delivered'
   | 'cancelled'
   | 'refunded';
 
-export type PaymentStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+export type PaymentStatus = 'pending' | 'paid' | 'failed';
 
-export interface ShippingAddress {
+// Backend address format (OrderAddressResource)
+export interface OrderAddress {
+  id?: number;
+  type?: string;
+  name: string;
+  phone?: string;
+  address: string;
+  address_line_2?: string;
+  city: string;
+  state?: string;
+  postal_code: string;
+  country: string;
+  full_address?: string;
+}
+
+// Frontend form address (used in ShippingStep form)
+export interface ShippingAddressForm {
   id?: number;
   first_name: string;
   last_name: string;
@@ -41,70 +58,74 @@ export interface ShippingOption {
 
 export interface PaymentMethod {
   id: string;
-  type: 'mercadopago' | 'bank_transfer' | 'cash';
+  type: string;
   name: string;
   description?: string;
   icon?: string;
+  enabled?: boolean;
 }
 
 export interface MercadoPagoPreference {
-  id: string;
+  payment_id: number;
+  preference_id: string;
   init_point: string;
   sandbox_init_point: string;
 }
 
+// Data sent to backend for checkout
 export interface CheckoutData {
-  shipping_address: ShippingAddress;
-  shipping_option_id: string;
-  payment_method_id: string;
+  shipping_address: OrderAddress;
+  billing_address?: OrderAddress;
+  shipping_cost: number;
+  payment_method: string;
   notes?: string;
 }
 
 export interface OrderItem {
   id: number;
   product_id: number;
-  product_name: string;
-  product_image?: string;
   variant_id?: number;
-  variant_name?: string;
+  name: string;
   sku?: string;
-  price: number;
   quantity: number;
-  subtotal: number;
-}
-
-export interface OrderTotals {
-  subtotal: number;
-  shipping: number;
-  tax: number;
-  discount: number;
+  price: number;
   total: number;
+  options?: Record<string, string>;
 }
 
 export interface Order {
   id: number;
   order_number: string;
-  user_id: number;
   status: OrderStatus;
   payment_status: PaymentStatus;
-  shipping_address: ShippingAddress;
-  shipping_option: ShippingOption;
-  items: OrderItem[];
-  totals: OrderTotals;
+  payment_method?: string;
+  subtotal: number;
+  shipping_cost: number;
+  tax: number;
+  discount: number;
+  total: number;
+  item_count?: number;
   notes?: string;
   tracking_number?: string;
-  payment_id?: string;
-  payment_method?: string;
-  created_at: string;
-  updated_at: string;
+  items: OrderItem[];
+  shipping_address?: OrderAddress;
+  billing_address?: OrderAddress;
   paid_at?: string;
   shipped_at?: string;
   delivered_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// Response from POST /checkout
+export interface CheckoutResponse {
+  order: Order;
+  payment_url: string | null;
 }
 
 export interface CheckoutState {
   step: CheckoutStep;
-  shippingAddress: ShippingAddress | null;
+  shippingAddress: ShippingAddressForm | null;
   shippingOptions: ShippingOption[];
   selectedShippingOption: ShippingOption | null;
   paymentMethods: PaymentMethod[];
@@ -115,17 +136,17 @@ export interface CheckoutState {
 
 export interface CheckoutContextType extends CheckoutState {
   setStep: (step: CheckoutStep) => void;
-  setShippingAddress: (address: ShippingAddress) => void;
+  setShippingAddress: (address: ShippingAddressForm) => void;
   setShippingOption: (option: ShippingOption) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
-  fetchShippingOptions: (address: ShippingAddress) => Promise<void>;
+  fetchShippingOptions: (address: ShippingAddressForm) => Promise<void>;
   processCheckout: () => Promise<Order>;
   reset: () => void;
 }
 
 export interface OrdersResponse {
   data: Order[];
-  meta: {
+  pagination: {
     current_page: number;
     per_page: number;
     total: number;
@@ -136,4 +157,18 @@ export interface OrdersResponse {
 
 export interface OrderResponse {
   data: Order;
+}
+
+// Helper to convert frontend form address to backend address format
+export function formAddressToBackend(form: ShippingAddressForm): OrderAddress {
+  return {
+    name: `${form.first_name} ${form.last_name}`.trim(),
+    phone: form.phone,
+    address: `${form.street} ${form.number}`.trim(),
+    address_line_2: form.apartment || undefined,
+    city: form.city,
+    state: form.state,
+    postal_code: form.postal_code,
+    country: form.country,
+  };
 }

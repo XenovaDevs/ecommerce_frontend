@@ -16,7 +16,6 @@ export const APP_CONFIG = {
 
 export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
-  REFRESH_TOKEN: 'refresh_token',
   CART_ID: 'cart_id',
   USER: 'user',
 } as const;

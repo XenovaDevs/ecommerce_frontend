@@ -43,7 +43,7 @@ export function PaymentStep({
           <div className="space-y-3">
             {paymentMethods.map((method) => {
               const isSelected = selectedMethod?.id === method.id;
-              const Icon = PAYMENT_ICONS[method.type] || CreditCard;
+              const Icon = PAYMENT_ICONS[method.id] || CreditCard;
 
               return (
                 <button
@@ -79,7 +79,7 @@ export function PaymentStep({
             })}
           </div>
 
-          {selectedMethod?.type === 'mercadopago' && (
+          {selectedMethod?.id === 'mercadopago' && (
             <div className="mt-6 rounded-lg bg-blue-50 p-4">
               <p className="text-sm text-blue-800">
                 Serás redirigido a Mercado Pago para completar el pago de forma segura.
@@ -88,7 +88,7 @@ export function PaymentStep({
             </div>
           )}
 
-          {selectedMethod?.type === 'bank_transfer' && (
+          {selectedMethod?.id === 'bank_transfer' && (
             <div className="mt-6 rounded-lg bg-yellow-50 p-4">
               <p className="text-sm text-yellow-800">
                 Te enviaremos los datos bancarios por email después de confirmar el pedido.

@@ -3,19 +3,22 @@ export type {
   CheckoutStep,
   OrderStatus,
   PaymentStatus,
-  ShippingAddress,
+  OrderAddress,
+  ShippingAddressForm,
   ShippingOption,
   PaymentMethod,
   MercadoPagoPreference,
   CheckoutData,
+  CheckoutResponse,
   OrderItem,
-  OrderTotals,
   Order,
   CheckoutState,
   CheckoutContextType,
   OrdersResponse,
   OrderResponse,
 } from './types';
+
+export { formAddressToBackend } from './types';
 
 // Services
 export { checkoutService } from './services';

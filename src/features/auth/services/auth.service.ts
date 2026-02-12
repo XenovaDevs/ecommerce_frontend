@@ -10,6 +10,13 @@ import type {
   ResetPasswordData,
 } from '../types';
 
+interface AuthPayload {
+  user: User;
+  access_token: string;
+  token_type?: string;
+  expires_in?: number;
+}
+
 /**
  * @ai-context Authentication service for API calls.
  *             Handles login, register, logout, token refresh, and user fetching.
@@ -24,7 +31,7 @@ export const authService = {
    * @ai-context Authenticates user with email and password
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<any>>(
+    const response = await apiClient.post<ApiResponse<AuthPayload>>(
       API_ENDPOINTS.AUTH.LOGIN,
       credentials
     );
@@ -33,11 +40,10 @@ export const authService = {
     const user = data.user;
     const tokens = {
       access_token: data.access_token,
-      refresh_token: data.refresh_token,
       token_type: data.token_type || 'Bearer',
       expires_in: data.expires_in || 3600,
     };
-    setAuthTokens(tokens.access_token, tokens.refresh_token);
+    setAuthTokens(tokens.access_token);
 
     return { user, tokens };
   },
@@ -46,7 +52,7 @@ export const authService = {
    * @ai-context Registers a new user account
    */
   async register(registerData: RegisterData): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<any>>(
+    const response = await apiClient.post<ApiResponse<AuthPayload>>(
       API_ENDPOINTS.AUTH.REGISTER,
       registerData
     );
@@ -55,13 +61,18 @@ export const authService = {
     const user = data.user;
     const tokens = {
       access_token: data.access_token,
-      refresh_token: data.refresh_token,
       token_type: data.token_type || 'Bearer',
       expires_in: data.expires_in || 3600,
     };
-    setAuthTokens(tokens.access_token, tokens.refresh_token);
+    setAuthTokens(tokens.access_token);
 
     return { user, tokens };
+  },
+
+  async refreshAccessToken(): Promise<void> {
+    const response = await apiClient.post<ApiResponse<AuthPayload>>(API_ENDPOINTS.AUTH.REFRESH, {});
+    const data = response.data.data || response.data;
+    setAuthTokens(data.access_token);
   },
 
   /**

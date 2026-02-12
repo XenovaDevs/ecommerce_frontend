@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { MapPin, Plus, Edit, Trash2, Check } from 'lucide-react';
 import { Button, Badge, Card, CardContent, Modal } from '@/components/ui';
-import type { ShippingAddress } from '@/features/checkout/types';
+import type { ShippingAddressForm } from '@/features/checkout/types';
 
 /**
  * @ai-context Addresses page for managing user shipping addresses.
  */
 
 // Mock addresses - replace with actual API integration
-const mockAddresses: ShippingAddress[] = [
+const mockAddresses: ShippingAddressForm[] = [
   {
     id: 1,
     first_name: 'Juan',

@@ -25,7 +25,7 @@ const statusConfig: Record<
 > = {
   pending: { label: 'Pendiente', variant: 'warning' },
   processing: { label: 'Procesando', variant: 'default' },
-  paid: { label: 'Pagado', variant: 'success' },
+  confirmed: { label: 'Confirmado', variant: 'success' },
   shipped: { label: 'Enviado', variant: 'default' },
   delivered: { label: 'Entregado', variant: 'success' },
   cancelled: { label: 'Cancelado', variant: 'danger' },
@@ -130,7 +130,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                   >
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">
-                        {item.product_name}
+                        {item.name}
                       </h3>
                       <div className="mt-1 flex items-center gap-4 text-sm text-gray-600">
                         <span>Cantidad: {item.quantity}</span>
@@ -138,7 +138,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                       </div>
                     </div>
                     <p className="font-semibold text-gray-900">
-                      {formatCurrency(item.subtotal)}
+                      {formatCurrency(item.total)}
                     </p>
                   </div>
                 ))}
@@ -157,20 +157,21 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
               </div>
               <address className="not-italic text-sm text-gray-600">
                 <p className="font-medium text-gray-900 mb-1">
-                  {order.shipping_address.first_name} {order.shipping_address.last_name}
+                  {order.shipping_address?.name}
                 </p>
-                <p>
-                  {order.shipping_address.street} {order.shipping_address.number}
-                </p>
-                {order.shipping_address.apartment && (
-                  <p>Piso/Depto: {order.shipping_address.apartment}</p>
+                <p>{order.shipping_address?.address}</p>
+                {order.shipping_address?.address_line_2 && (
+                  <p>{order.shipping_address.address_line_2}</p>
                 )}
                 <p>
-                  {order.shipping_address.city}, {order.shipping_address.state}
+                  {order.shipping_address?.city}
+                  {order.shipping_address?.state && `, ${order.shipping_address.state}`}
                 </p>
-                <p>CP: {order.shipping_address.postal_code}</p>
-                <p>País: {order.shipping_address.country}</p>
-                <p className="mt-2">{order.shipping_address.phone}</p>
+                <p>CP: {order.shipping_address?.postal_code}</p>
+                <p>País: {order.shipping_address?.country}</p>
+                {order.shipping_address?.phone && (
+                  <p className="mt-2">{order.shipping_address.phone}</p>
+                )}
               </address>
             </CardContent>
           </Card>
@@ -208,28 +209,28 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="font-medium">
-                    {formatCurrency(order.totals.subtotal)}
+                    {formatCurrency(order.subtotal)}
                   </span>
                 </div>
-                {order.totals.discount > 0 && (
+                {order.discount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <span>Descuento</span>
-                    <span>-{formatCurrency(order.totals.discount)}</span>
+                    <span>-{formatCurrency(order.discount)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <span className="text-gray-600">Envío</span>
                   <span className="font-medium">
-                    {order.totals.shipping === 0
+                    {order.shipping_cost === 0
                       ? 'Gratis'
-                      : formatCurrency(order.totals.shipping)}
+                      : formatCurrency(order.shipping_cost)}
                   </span>
                 </div>
                 <div className="border-t pt-2">
                   <div className="flex justify-between text-base">
                     <span className="font-semibold">Total</span>
                     <span className="font-bold text-primary">
-                      {formatCurrency(order.totals.total)}
+                      {formatCurrency(order.total)}
                     </span>
                   </div>
                 </div>

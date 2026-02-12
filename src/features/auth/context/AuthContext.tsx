@@ -10,7 +10,6 @@ import {
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
-import { hasAuthToken } from '@/services/api';
 import { ROUTES } from '@/constants';
 import { ErrorMessages } from '@/messages';
 import type { ApiError } from '@/types';
@@ -81,6 +80,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const handleAuthError = (error: unknown): string => {
     if (error instanceof AxiosError) {
       const apiError = error.response?.data as ApiError | undefined;
+      if (apiError?.error?.details) {
+        const messages = Object.values(apiError.error.details).flat();
+        return messages.join('. ');
+      }
       return apiError?.error?.message || ErrorMessages.AUTH.INVALID_CREDENTIALS;
     }
     return ErrorMessages.GENERAL.UNKNOWN;
@@ -89,14 +92,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check for existing session on mount
   useEffect(() => {
     const initAuth = async () => {
-      if (hasAuthToken()) {
-        try {
-          const user = await authService.getCurrentUser();
-          setUser(user);
-        } catch {
-          setUser(null);
-        }
-      } else {
+      try {
+        await authService.refreshAccessToken();
+        const user = await authService.getCurrentUser();
+        setUser(user);
+      } catch {
         setUser(null);
       }
     };
@@ -141,9 +141,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [router]);
 
   const refreshUser = useCallback(async () => {
-    if (!hasAuthToken()) return;
-
     try {
+      await authService.refreshAccessToken();
       const user = await authService.getCurrentUser();
       setUser(user);
     } catch {

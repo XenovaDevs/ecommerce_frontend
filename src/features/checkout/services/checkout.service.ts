@@ -1,11 +1,12 @@
 import { apiClient } from '@/services/api';
 import { API_ENDPOINTS } from '@/constants';
 import type {
-  ShippingAddress,
+  ShippingAddressForm,
   ShippingOption,
   PaymentMethod,
   MercadoPagoPreference,
   CheckoutData,
+  CheckoutResponse,
   Order,
   OrdersResponse,
   OrderResponse,
@@ -13,6 +14,7 @@ import type {
 
 /**
  * @ai-context Checkout API service for shipping, payment, and order processing.
+ *             Endpoints aligned with backend routes.
  */
 
 class CheckoutService {
@@ -20,16 +22,16 @@ class CheckoutService {
    * Validate cart before checkout
    */
   async validateCart(): Promise<{ valid: boolean; errors?: string[] }> {
-    const response = await apiClient.post<{ valid: boolean; errors?: string[] }>(
+    const response = await apiClient.post<{ data: { valid: boolean; message: string } }>(
       API_ENDPOINTS.CHECKOUT.VALIDATE
     );
-    return response.data;
+    return { valid: response.data.data.valid };
   }
 
   /**
    * Get shipping quote based on address
    */
-  async getShippingQuote(address: ShippingAddress): Promise<ShippingOption[]> {
+  async getShippingQuote(address: ShippingAddressForm): Promise<ShippingOption[]> {
     const response = await apiClient.post<{ data: ShippingOption[] }>(
       API_ENDPOINTS.CHECKOUT.SHIPPING_QUOTE,
       {
@@ -43,29 +45,34 @@ class CheckoutService {
 
   /**
    * Get available payment methods
+   * Backend route: GET /payments/methods
    */
   async getPaymentMethods(): Promise<PaymentMethod[]> {
     const response = await apiClient.get<{ data: PaymentMethod[] }>(
-      `${API_ENDPOINTS.CHECKOUT.PROCESS.replace('/process', '')}/payment-methods`
+      '/payments/methods'
     );
     return response.data.data;
   }
 
   /**
-   * Create Mercado Pago preference for payment
+   * Create Mercado Pago preference for an existing order
+   * Backend route: POST /checkout/payment-preference
    */
   async createPaymentPreference(orderId: number): Promise<MercadoPagoPreference> {
     const response = await apiClient.post<{ data: MercadoPagoPreference }>(
-      `${API_ENDPOINTS.ORDERS.LIST}/${orderId}/payment-preference`
+      API_ENDPOINTS.CHECKOUT.PAYMENT_PREFERENCE,
+      { order_id: orderId }
     );
     return response.data.data;
   }
 
   /**
    * Process checkout and create order
+   * Backend route: POST /checkout
+   * Returns { order, payment_url }
    */
-  async processCheckout(data: CheckoutData): Promise<Order> {
-    const response = await apiClient.post<OrderResponse>(
+  async processCheckout(data: CheckoutData): Promise<CheckoutResponse> {
+    const response = await apiClient.post<{ data: CheckoutResponse }>(
       API_ENDPOINTS.CHECKOUT.PROCESS,
       data
     );
@@ -94,6 +101,7 @@ class CheckoutService {
 
   /**
    * Get single order by order number
+   * Backend route: GET /customer/orders/number/{orderNumber}
    */
   async getOrderByNumber(orderNumber: string): Promise<Order> {
     const response = await apiClient.get<OrderResponse>(
@@ -115,8 +123,8 @@ class CheckoutService {
   /**
    * Save shipping address
    */
-  async saveAddress(address: ShippingAddress): Promise<ShippingAddress> {
-    const response = await apiClient.post<{ data: ShippingAddress }>(
+  async saveAddress(address: ShippingAddressForm): Promise<ShippingAddressForm> {
+    const response = await apiClient.post<{ data: ShippingAddressForm }>(
       API_ENDPOINTS.USER.ADDRESSES,
       address
     );
@@ -126,8 +134,8 @@ class CheckoutService {
   /**
    * Get saved addresses
    */
-  async getAddresses(): Promise<ShippingAddress[]> {
-    const response = await apiClient.get<{ data: ShippingAddress[] }>(
+  async getAddresses(): Promise<ShippingAddressForm[]> {
+    const response = await apiClient.get<{ data: ShippingAddressForm[] }>(
       API_ENDPOINTS.USER.ADDRESSES
     );
     return response.data.data;

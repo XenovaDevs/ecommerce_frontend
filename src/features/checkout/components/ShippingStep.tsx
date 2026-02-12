@@ -9,7 +9,7 @@ import { Button, Input, Card, CardContent } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils';
 import { ValidationMessages } from '@/messages';
-import type { ShippingAddress, ShippingOption } from '../types';
+import type { ShippingAddressForm, ShippingOption } from '../types';
 
 /**
  * @ai-context Shipping step with address form and shipping option selection.
@@ -31,10 +31,10 @@ const shippingSchema = z.object({
 type ShippingFormData = z.infer<typeof shippingSchema>;
 
 interface ShippingStepProps {
-  initialAddress?: ShippingAddress | null;
+  initialAddress?: ShippingAddressForm | null;
   shippingOptions: ShippingOption[];
   selectedOption: ShippingOption | null;
-  onAddressSubmit: (address: ShippingAddress) => Promise<void>;
+  onAddressSubmit: (address: ShippingAddressForm) => Promise<void>;
   onOptionSelect: (option: ShippingOption) => void;
   onNext: () => void;
   isLoading?: boolean;
@@ -63,7 +63,7 @@ export function ShippingStep({
   });
 
   const onSubmit = async (data: ShippingFormData) => {
-    await onAddressSubmit(data as ShippingAddress);
+    await onAddressSubmit(data as ShippingAddressForm);
     setAddressSubmitted(true);
   };
 

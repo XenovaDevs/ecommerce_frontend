@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { checkoutService } from '../services';
 import { useCart } from '@/features/cart';
 import { ROUTES } from '@/constants';
+import { formAddressToBackend } from '../types';
 import type {
   CheckoutStep,
-  ShippingAddress,
+  ShippingAddressForm,
   ShippingOption,
   PaymentMethod,
   Order,
@@ -15,12 +16,13 @@ import type {
 
 /**
  * @ai-context Hook for managing checkout flow state and actions.
+ *             Aligned with backend's single-step checkout that returns payment_url.
  */
 
 interface UseCheckoutReturn {
   // State
   step: CheckoutStep;
-  shippingAddress: ShippingAddress | null;
+  shippingAddress: ShippingAddressForm | null;
   shippingOptions: ShippingOption[];
   selectedShippingOption: ShippingOption | null;
   paymentMethods: PaymentMethod[];
@@ -32,7 +34,7 @@ interface UseCheckoutReturn {
   setStep: (step: CheckoutStep) => void;
   nextStep: () => void;
   prevStep: () => void;
-  setShippingAddress: (address: ShippingAddress) => Promise<void>;
+  setShippingAddress: (address: ShippingAddressForm) => Promise<void>;
   setShippingOption: (option: ShippingOption) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
   processCheckout: () => Promise<Order | null>;
@@ -50,7 +52,7 @@ export function useCheckout(): UseCheckoutReturn {
   const { clearCart } = useCart();
 
   const [step, setStep] = useState<CheckoutStep>('shipping');
-  const [shippingAddress, setShippingAddressState] = useState<ShippingAddress | null>(null);
+  const [shippingAddress, setShippingAddressState] = useState<ShippingAddressForm | null>(null);
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
   const [selectedShippingOption, setSelectedShippingOption] = useState<ShippingOption | null>(null);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
@@ -59,7 +61,7 @@ export function useCheckout(): UseCheckoutReturn {
   const [error, setError] = useState<string | null>(null);
 
   // Set shipping address and fetch shipping options
-  const setShippingAddress = useCallback(async (address: ShippingAddress) => {
+  const setShippingAddress = useCallback(async (address: ShippingAddressForm) => {
     setIsLoading(true);
     setError(null);
 
@@ -77,7 +79,8 @@ export function useCheckout(): UseCheckoutReturn {
 
       // Also fetch payment methods
       const methods = await checkoutService.getPaymentMethods();
-      setPaymentMethods(methods);
+      // Filter to only enabled methods
+      setPaymentMethods(methods.filter((m) => m.enabled !== false));
     } catch (err) {
       setError('Error al obtener opciones de envío');
       console.error(err);
@@ -150,26 +153,25 @@ export function useCheckout(): UseCheckoutReturn {
         return null;
       }
 
-      // Process checkout
-      const order = await checkoutService.processCheckout({
-        shipping_address: shippingAddress,
-        shipping_option_id: selectedShippingOption.id,
-        payment_method_id: selectedPaymentMethod.id,
+      // Convert form address to backend format
+      const backendAddress = formAddressToBackend(shippingAddress);
+
+      // Process checkout - backend creates order + payment preference in one step
+      const result = await checkoutService.processCheckout({
+        shipping_address: backendAddress,
+        shipping_cost: selectedShippingOption.price,
+        payment_method: selectedPaymentMethod.id,
       });
 
-      // If Mercado Pago, redirect to payment
-      if (selectedPaymentMethod.type === 'mercadopago') {
-        const preference = await checkoutService.createPaymentPreference(order.id);
-        // Use sandbox in development
-        const paymentUrl =
-          process.env.NODE_ENV === 'production'
-            ? preference.init_point
-            : preference.sandbox_init_point;
-        window.location.href = paymentUrl;
+      const order = result.order;
+
+      // If backend returned a payment URL (MercadoPago), redirect to it
+      if (result.payment_url) {
+        window.location.href = result.payment_url;
         return order;
       }
 
-      // Clear cart and redirect to success
+      // For non-MP methods (bank transfer, cash), clear cart and redirect to success
       clearCart();
       router.push(`${ROUTES.CHECKOUT_SUCCESS}?order=${order.order_number}`);
       return order;

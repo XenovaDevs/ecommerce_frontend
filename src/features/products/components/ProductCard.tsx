@@ -111,13 +111,16 @@ export function ProductCard({
           >
             <Heart className={cn('h-4 w-4', isInWishlist && 'fill-current')} />
           </button>
-          <Link
-            href={productUrl}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.href = productUrl;
+            }}
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm text-gray-600 shadow-lg transition-all duration-200 hover:text-primary hover:scale-110"
             aria-label="Ver producto"
           >
             <Eye className="h-4 w-4" />
-          </Link>
+          </button>
         </div>
       </Link>
 

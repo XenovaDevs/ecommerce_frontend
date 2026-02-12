@@ -13,6 +13,8 @@ export const ROUTES = {
   CART: '/cart',
   CHECKOUT: '/checkout',
   CHECKOUT_SUCCESS: '/checkout/success',
+  CHECKOUT_FAILURE: '/checkout/failure',
+  CHECKOUT_PENDING: '/checkout/pending',
   CONTACT: '/contact',
 
   // Auth routes

@@ -20,7 +20,25 @@ const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+  withCredentials: true,
 });
+
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value?: string) => void;
+  reject: (reason?: unknown) => void;
+}> = [];
+
+const processQueue = (error: unknown, token: string | null = null) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token ?? undefined);
+    }
+  });
+  failedQueue = [];
+};
 
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
@@ -39,37 +57,69 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError<ApiError>) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    const requestUrl = originalRequest?.url || '';
 
     // Handle 401 - Token expired
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401
+      && !originalRequest._retry
+      && !requestUrl.includes('/auth/refresh')
+      && !requestUrl.includes('/auth/login')
+    ) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        })
+          .then((token) => {
+            if (token && originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+            }
+            return apiClient(originalRequest);
+          })
+          .catch((queueError) => Promise.reject(queueError));
+      }
+
       originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        const refreshToken = Cookies.get(STORAGE_KEYS.REFRESH_TOKEN);
-        if (refreshToken) {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
-            refresh_token: refreshToken,
-          });
-
-          const { access_token, refresh_token } = response.data.data;
-
-          Cookies.set(STORAGE_KEYS.AUTH_TOKEN, access_token, { expires: 1 });
-          Cookies.set(STORAGE_KEYS.REFRESH_TOKEN, refresh_token, { expires: 7 });
-
-          if (originalRequest.headers) {
-            originalRequest.headers.Authorization = `Bearer ${access_token}`;
+        const response = await axios.post(
+          `${API_BASE_URL}/auth/refresh`,
+          {},
+          {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
           }
+        );
 
-          return apiClient(originalRequest);
+        const payload = response.data?.data || response.data;
+        const accessToken = payload?.access_token;
+
+        if (!accessToken) {
+          throw new Error('Refresh did not return access_token');
         }
+
+        setAuthTokens(accessToken);
+
+        if (originalRequest.headers) {
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        }
+
+        processQueue(null, accessToken);
+        return apiClient(originalRequest);
       } catch (refreshError) {
         // Refresh failed - clear tokens and redirect to login
+        processQueue(refreshError, null);
         Cookies.remove(STORAGE_KEYS.AUTH_TOKEN);
-        Cookies.remove(STORAGE_KEYS.REFRESH_TOKEN);
 
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
+      } finally {
+        isRefreshing = false;
       }
     }
 
@@ -82,9 +132,13 @@ export { apiClient };
 /**
  * @ai-context Helper function to set auth tokens
  */
-export function setAuthTokens(accessToken: string, refreshToken: string): void {
-  Cookies.set(STORAGE_KEYS.AUTH_TOKEN, accessToken, { expires: 1 }); // 1 day
-  Cookies.set(STORAGE_KEYS.REFRESH_TOKEN, refreshToken, { expires: 7 }); // 7 days
+export function setAuthTokens(accessToken: string): void {
+  const isSecure = typeof window !== 'undefined' && window.location.protocol === 'https:';
+  Cookies.set(STORAGE_KEYS.AUTH_TOKEN, accessToken, {
+    expires: 1 / 96, // 15 minutes
+    sameSite: 'strict',
+    secure: isSecure,
+  });
 }
 
 /**
@@ -92,7 +146,6 @@ export function setAuthTokens(accessToken: string, refreshToken: string): void {
  */
 export function clearAuthTokens(): void {
   Cookies.remove(STORAGE_KEYS.AUTH_TOKEN);
-  Cookies.remove(STORAGE_KEYS.REFRESH_TOKEN);
 }
 
 /**
