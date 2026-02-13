@@ -44,7 +44,7 @@ export function ProductCard({
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0;
 
-  const mainImage = product.images?.[0]?.url || '/images/placeholder-product.png';
+  const mainImage = product.images?.[0]?.url || '/images/placeholder-product.svg';
   const hoverImage = product.images?.[1]?.url;
 
   const productUrl = ROUTES.PRODUCT_DETAIL(product.slug);
@@ -58,7 +58,7 @@ export function ProductCard({
       {/* Image Container */}
       <Link href={productUrl} className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
         <Image
-          src={imageError ? '/images/placeholder-product.png' : (isHovered && hoverImage ? hoverImage : mainImage)}
+          src={imageError ? '/images/placeholder-product.svg' : (isHovered && hoverImage ? hoverImage : mainImage)}
           alt={product.name}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -170,3 +170,4 @@ export function ProductCard({
     </div>
   );
 }
+

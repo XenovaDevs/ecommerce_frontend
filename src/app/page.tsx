@@ -2,15 +2,16 @@ import Link from 'next/link';
 import { ArrowRight, Truck, Shield, CreditCard, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { ROUTES, APP_CONFIG } from '@/constants';
+import { FeaturedProducts, CategoriesSection } from './(shop)/_components';
 
 /**
- * @ai-context Home page with hero section, features, and categories.
+ * @ai-context Home page with hero section, dynamic featured products, and categories.
  */
 
 const features = [
   {
     icon: Truck,
-    title: 'Envío gratis',
+    title: 'Envio gratis',
     description: `En compras mayores a ${APP_CONFIG.FREE_SHIPPING_MIN.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}`,
   },
   {
@@ -20,8 +21,8 @@ const features = [
   },
   {
     icon: CreditCard,
-    title: 'Múltiples pagos',
-    description: 'Tarjetas, Mercado Pago y más',
+    title: 'Multiples pagos',
+    description: 'Tarjetas, Mercado Pago y mas',
   },
   {
     icon: Headphones,
@@ -51,7 +52,7 @@ export default function HomePage() {
               </h1>
             </div>
             <p className="mt-8 text-xl text-gray-600 leading-relaxed animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              Descubre nuestra colección de productos de alta calidad. Envío a todo el país con las mejores opciones de pago.
+              Descubre nuestra coleccion de productos de alta calidad. Envio a todo el pais con las mejores opciones de pago.
             </p>
             <div className="mt-10 flex flex-wrap gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <Link href={ROUTES.PRODUCTS}>
@@ -62,7 +63,7 @@ export default function HomePage() {
               </Link>
               <Link href={ROUTES.CATEGORIES}>
                 <Button variant="outline" size="xl">
-                  Explorar categorías
+                  Explorar categorias
                 </Button>
               </Link>
             </div>
@@ -95,7 +96,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Products Placeholder */}
+      {/* Featured Products */}
       <section className="py-24 bg-gradient-to-b from-white to-gray-50/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-12">
@@ -104,7 +105,7 @@ export default function HomePage() {
                 Productos destacados
               </h2>
               <p className="mt-2 text-gray-600">
-                Lo mejor de nuestra colección
+                Lo mejor de nuestra coleccion
               </p>
             </div>
             <Link
@@ -116,54 +117,23 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {/* Product grid placeholder */}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="group animate-slide-up"
-                style={{ animationDelay: `${i * 0.1}s` }}
-              >
-                <div className="aspect-square rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 animate-shimmer overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover-lift" />
-                <div className="mt-4 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-                  <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <FeaturedProducts />
         </div>
       </section>
 
-      {/* Categories Placeholder */}
+      {/* Categories */}
       <section className="bg-gray-50 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-              Explora por categoría
+              Explora por categoria
             </h2>
             <p className="mt-3 text-gray-600">
               Encuentra exactamente lo que buscas
             </p>
           </div>
 
-          {/* Categories grid placeholder */}
-          <div className="grid grid-cols-3 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="group cursor-pointer animate-slide-up"
-                style={{ animationDelay: `${i * 0.05}s` }}
-              >
-                <div className="aspect-square rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300 hover-lift overflow-hidden border border-gray-100">
-                  <div className="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 animate-shimmer" />
-                </div>
-                <div className="mt-3 text-center">
-                  <div className="h-3 bg-gray-200 rounded animate-pulse mx-auto w-16" />
-                </div>
-              </div>
-            ))}
-          </div>
+          <CategoriesSection />
         </div>
       </section>
 
@@ -177,7 +147,7 @@ export default function HomePage() {
           <div className="glass border border-white/20 rounded-3xl px-8 py-16 text-center sm:px-16 shadow-2xl">
             <div className="animate-slide-up">
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Suscríbete a nuestro newsletter
+                Suscribete a nuestro newsletter
               </h2>
               <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
                 Recibe ofertas exclusivas, lanzamientos anticipados y novedades directamente en tu email.
@@ -194,7 +164,7 @@ export default function HomePage() {
               </Button>
             </form>
             <p className="mt-4 text-xs text-gray-500 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              Puedes cancelar tu suscripción en cualquier momento
+              Puedes cancelar tu suscripcion en cualquier momento
             </p>
           </div>
         </div>

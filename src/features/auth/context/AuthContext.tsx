@@ -13,6 +13,7 @@ import { AxiosError } from 'axios';
 import { ROUTES } from '@/constants';
 import { ErrorMessages } from '@/messages';
 import type { ApiError } from '@/types';
+import { hasAuthToken } from '@/services/api';
 import { authService } from '../services';
 import type {
   AuthContextType,
@@ -92,6 +93,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Check for existing session on mount
   useEffect(() => {
     const initAuth = async () => {
+      if (!hasAuthToken()) {
+        setUser(null);
+        return;
+      }
+
       try {
         await authService.refreshAccessToken();
         const user = await authService.getCurrentUser();
