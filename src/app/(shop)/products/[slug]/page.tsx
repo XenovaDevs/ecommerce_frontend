@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingCart, Heart, Share2, Truck, Shield, ChevronLeft } from 'lucide-react';
+import { sanitizeHtml } from '@/lib/sanitize';
+import { getProductSchema, getBreadcrumbSchema } from '@/lib/structured-data';
 import { Button, Badge, Card, CardContent } from '@/components/ui';
 import { useProduct } from '@/features/products';
 import { useCart } from '@/features/cart';
@@ -29,6 +31,12 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      document.title = `${product.name} | Le Pas Sage`;
+    }
+  }, [product]);
 
   if (error) {
     return notFound();
@@ -66,7 +74,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0;
 
-  const mainImage = product.images[selectedImage]?.url || '/images/placeholder-product.png';
+  const mainImage = product.images[selectedImage]?.url || '/images/placeholder-product.svg';
   const isOutOfStock = product.stock === 0;
 
   const handleAddToCart = async () => {
@@ -85,6 +93,23 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getProductSchema(product)) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(getBreadcrumbSchema([
+            { name: 'Inicio', url: '/' },
+            { name: 'Productos', url: '/products' },
+            ...(product.category ? [{ name: product.category.name, url: `/categories/${product.category.slug}` }] : []),
+            { name: product.name, url: `/products/${product.slug}` },
+          ])),
+        }}
+      />
+
       {/* Back Button & Breadcrumb */}
       <div className="mb-10 animate-slide-up">
         <Link
@@ -293,7 +318,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </h2>
             <div
               className="prose prose-lg max-w-none text-gray-600 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: product.description }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
             />
           </CardContent>
         </Card>
@@ -330,3 +355,4 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     </div>
   );
 }
+

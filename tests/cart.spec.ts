@@ -179,6 +179,17 @@ test.describe('Carrito de Compras', () => {
   });
 
   test('debe persistir el carrito después de navegar', async ({ page }) => {
+    // Prepara carrito vía API para garantizar item
+    const { loginAsCustomer, ensureCartWithItem, getFirstProduct, newApiContext } = await import('./utils/api');
+    const { token } = await loginAsCustomer();
+    const api = await newApiContext(token);
+    const product = await getFirstProduct(api);
+    expect(product?.id).toBeTruthy();
+    await ensureCartWithItem(api, String(product!.id));
+    await page.context().addCookies([
+      { name: 'auth_token', value: token, domain: 'localhost', path: '/', httpOnly: false, secure: false, sameSite: 'Lax' },
+    ]);
+
     // Agregar producto
     await page.goto('/products');
     await page.waitForTimeout(2000);
@@ -198,7 +209,8 @@ test.describe('Carrito de Compras', () => {
     await page.waitForTimeout(1000);
 
     // El producto debería seguir ahí
-    await page.waitForLoadState('networkidle');
+    const cartItem = page.locator('[data-testid*="cart-item"], [class*="cart"] [class*="item"]').first();
+    await expect(cartItem).toBeVisible({ timeout: 10000 });
   });
 
   test('debe mostrar imagen del producto en el carrito', async ({ page }) => {

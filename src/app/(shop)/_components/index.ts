@@ -1,0 +1,13 @@
+export { GoldDivider } from './GoldDivider';
+export { SectionHeader } from './SectionHeader';
+export { CategoryCard } from './CategoryCard';
+export { HeroSection } from './HeroSection';
+export { TrustBar } from './TrustBar';
+export { FeaturedProducts } from './FeaturedProducts';
+export { CategoriesSection } from './CategoriesSection';
+export { BrandStory } from './BrandStory';
+export { NewArrivals } from './NewArrivals';
+export { PromoBanner } from './PromoBanner';
+export { TestimonialsSection } from './TestimonialsSection';
+export { NewsletterSection } from './NewsletterSection';
+export { QuickViewModal } from './QuickViewModal';

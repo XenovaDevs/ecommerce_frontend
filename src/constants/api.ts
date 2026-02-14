@@ -23,7 +23,7 @@ export const API_ENDPOINTS = {
     DETAIL: (slug: string) => `/products/${slug}`,
     SEARCH: '/products/search',
     FEATURED: '/products/featured',
-    BY_CATEGORY: (categorySlug: string) => `/categories/${categorySlug}/products`,
+    BY_CATEGORY: (categoryId: number | string) => `/products?category=${categoryId}`,
   },
 
   // Categories endpoints

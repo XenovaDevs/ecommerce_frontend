@@ -49,18 +49,16 @@ test.describe('Página de Productos', () => {
   test('debe mostrar botón de filtros en mobile', async ({ page }) => {
     // Cambiar a viewport móvil
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.reload();
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => {});
 
     // Buscar botón de filtros móvil
     const mobileFilterButton = page.getByRole('button', { name: /filtro/i }).first();
-    if (await mobileFilterButton.isVisible()) {
-      await expect(mobileFilterButton).toBeVisible();
-    }
+    await expect(mobileFilterButton).toBeVisible();
   });
 
   test('debe abrir modal de filtros en mobile', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.reload();
+    await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => {});
 
     const filterButton = page.locator('button').filter({ hasText: /filtro/i }).first();
 
@@ -142,7 +140,7 @@ test.describe('Página de Productos', () => {
     if (await loadMoreButton.isVisible()) {
       await loadMoreButton.click();
       await page.waitForTimeout(1000);
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     }
   });
 
@@ -152,13 +150,10 @@ test.describe('Página de Productos', () => {
     // Buscar primer producto clickeable
     const productLink = page.locator('a[href*="/products/"]').first();
 
-    if (await productLink.isVisible()) {
-      await productLink.click();
-      await page.waitForLoadState('networkidle');
-
-      // Verificar que estamos en página de detalle
-      expect(page.url()).toContain('/products/');
-    }
+    await expect(productLink).toBeVisible();
+    await productLink.click();
+    await page.waitForLoadState('domcontentloaded');
+    await expect(page).toHaveURL(/\/products\//);
   });
 
   test('debe mostrar productos en oferta si existe el filtro', async ({ page }) => {

@@ -22,7 +22,7 @@ const mockWishlist = [
       name: 'Producto Ejemplo 1',
       price: 29990,
       compare_at_price: 39990,
-      images: [{ id: 1, url: '/images/placeholder-product.png', alt: 'Producto 1' }],
+      images: [{ id: 1, url: '/images/placeholder-product.svg', alt: 'Producto 1' }],
       stock: 10,
       is_new: true,
     },
@@ -36,7 +36,7 @@ const mockWishlist = [
       name: 'Producto Ejemplo 2',
       price: 49990,
       compare_at_price: null,
-      images: [{ id: 2, url: '/images/placeholder-product.png', alt: 'Producto 2' }],
+      images: [{ id: 2, url: '/images/placeholder-product.svg', alt: 'Producto 2' }],
       stock: 5,
       is_new: false,
     },
@@ -122,7 +122,7 @@ export default function WishlistPage() {
                 <Link href={ROUTES.PRODUCT_DETAIL(product.slug)}>
                   <div className="relative aspect-square bg-gray-100 overflow-hidden group">
                     <img
-                      src={product.images[0]?.url || '/images/placeholder-product.png'}
+                      src={product.images[0]?.url || '/images/placeholder-product.svg'}
                       alt={product.name}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
@@ -203,3 +203,4 @@ export default function WishlistPage() {
     </div>
   );
 }
+

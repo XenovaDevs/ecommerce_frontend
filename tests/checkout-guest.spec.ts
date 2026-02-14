@@ -2,31 +2,18 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Checkout como Invitado', () => {
   test.beforeEach(async ({ page }) => {
-    // Agregar producto al carrito primero
-    await page.goto('/products');
-    await page.waitForTimeout(2000);
-
-    const addButton = page.getByRole('button', { name: /agregar/i }).first();
-    if (await addButton.isVisible()) {
-      await addButton.click();
-      await page.waitForTimeout(1000);
-    }
-
-    // Ir al carrito
-    await page.goto('/cart');
-    await page.waitForTimeout(1000);
-
-    // Proceder al checkout
-    const checkoutButton = page.getByRole('button', { name: /finalizar|checkout|comprar/i }).first();
-    if (await checkoutButton.isVisible()) {
-      await checkoutButton.click();
-      await page.waitForTimeout(1000);
-    }
+    const { newApiContext, ensureCartWithItem, getFirstProduct } = await import('./utils/api');
+    const api = await newApiContext();
+    const product = await getFirstProduct(api);
+    expect(product?.id).toBeTruthy();
+    await ensureCartWithItem(api, String(product!.id));
+    await page.goto('/checkout', { waitUntil: 'domcontentloaded' });
   });
 
   test('debe permitir acceder al checkout sin registrarse', async ({ page }) => {
     // Verificar que estamos en checkout o se ofrece opción de invitado
     await page.waitForTimeout(1000);
+    expect(page.url()).toContain('/checkout');
 
     // Buscar opción de continuar como invitado
     const guestOption = page.getByText(/invitado|sin.*registro|guest/i).first();
@@ -46,6 +33,7 @@ test.describe('Checkout como Invitado', () => {
 
   test('debe solicitar información de contacto', async ({ page }) => {
     await page.waitForTimeout(1000);
+    expect(page.url()).toContain('/checkout');
 
     // Buscar opción invitado si existe
     const guestButton = page.getByRole('button', { name: /invitado/i }).first();
@@ -69,6 +57,7 @@ test.describe('Checkout como Invitado', () => {
 
   test('debe completar información de entrega', async ({ page }) => {
     await page.waitForTimeout(1000);
+    expect(page.url()).toContain('/checkout');
 
     // Saltar opción invitado si existe
     const guestButton = page.getByRole('button', { name: /invitado/i }).first();
@@ -102,6 +91,7 @@ test.describe('Checkout como Invitado', () => {
 
   test('debe mostrar resumen del pedido', async ({ page }) => {
     await page.waitForTimeout(1000);
+    expect(page.url()).toContain('/checkout');
 
     // Verificar que se muestra el resumen
     const summary = page.locator('text=/resumen|summary|total/i').first();
