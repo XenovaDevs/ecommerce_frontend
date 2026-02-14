@@ -1,60 +1,59 @@
 /**
- * @ai-context Table component for displaying tabular data with sorting, selection, and responsive design.
+ * @ai-context Table component for displaying tabular data with sorting, selection, and responsive modes.
  *             Follows the Le Pas Sage design system with sage/gold accents.
- * @ai-props
- *   - columns: Array of column definitions with key, header, sortable config
- *   - data: Array of data objects to display
- *   - sortable: Enable column sorting
- *   - selectable: Enable row selection with checkboxes
- *   - onRowSelect: Callback when rows are selected
- *   - loading: Show loading skeleton state
- *   - emptyMessage: Message to show when no data
- *   - striped: Alternate row colors
- *   - hoverable: Enable hover states
- *   - stickyHeader: Keep header fixed on scroll
- * @ai-flow
- *   1. Renders table header with sortable columns
- *   2. Handles click on header to sort data
- *   3. Renders data rows with optional selection
- *   4. On mobile, converts to card layout
- *   5. Shows loading/empty states as needed
- * @ai-a11y
- *   - Semantic table elements
- *   - Sortable columns have aria-sort attributes
- *   - Checkboxes have proper labels
- *   - Keyboard navigation support
  */
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type ReactNode } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-export interface Column {
+type DataRow = Record<string, unknown>;
+type MobileMode = 'scroll' | 'cards';
+type MobileBreakpoint = 'sm' | 'md';
+type SortDirection = 'asc' | 'desc' | null;
+type BivariantRender<T extends DataRow> = {
+  bivarianceHack: (value: unknown, row: T) => ReactNode;
+}['bivarianceHack'];
+
+export interface Column<T extends DataRow = DataRow> {
   key: string;
   header: string;
   sortable?: boolean;
-  render?: (value: any, row: any) => React.ReactNode;
+  render?: BivariantRender<T>;
   className?: string;
+  mobileLabel?: string;
 }
 
-interface TableProps {
-  columns: Column[];
-  data: any[];
+interface TableProps<T extends DataRow = DataRow> {
+  columns: Column<T>[];
+  data: T[];
   sortable?: boolean;
   selectable?: boolean;
-  onRowSelect?: (selectedRows: any[]) => void;
+  onRowSelect?: (selectedRows: T[]) => void;
   loading?: boolean;
   emptyMessage?: string;
   striped?: boolean;
   hoverable?: boolean;
   stickyHeader?: boolean;
+  mobileMode?: MobileMode;
+  mobileBreakpoint?: MobileBreakpoint;
   className?: string;
 }
 
-type SortDirection = 'asc' | 'desc' | null;
+const mobileClasses: Record<MobileBreakpoint, { table: string; cards: string }> = {
+  sm: { table: 'hidden sm:table', cards: 'sm:hidden' },
+  md: { table: 'hidden md:table', cards: 'md:hidden' },
+};
 
-export const Table = ({
+function sortValue(value: unknown): string | number {
+  if (typeof value === 'number') return value;
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === 'string') return value.toLowerCase();
+  return String(value ?? '');
+}
+
+export const Table = <T extends DataRow>({
   columns,
   data,
   sortable = false,
@@ -65,28 +64,26 @@ export const Table = ({
   striped = true,
   hoverable = true,
   stickyHeader = false,
+  mobileMode = 'scroll',
+  mobileBreakpoint = 'md',
   className,
-}: TableProps) => {
+}: TableProps<T>) => {
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
-  // Sort data
   const sortedData = useMemo(() => {
     if (!sortColumn || !sortDirection) return data;
 
     return [...data].sort((a, b) => {
-      const aVal = a[sortColumn];
-      const bVal = b[sortColumn];
-
+      const aVal = sortValue(a[sortColumn]);
+      const bVal = sortValue(b[sortColumn]);
       if (aVal === bVal) return 0;
-
       const comparison = aVal > bVal ? 1 : -1;
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   }, [data, sortColumn, sortDirection]);
 
-  // Handle column sort
   const handleSort = (columnKey: string) => {
     if (!sortable) return;
 
@@ -103,7 +100,6 @@ export const Table = ({
     }
   };
 
-  // Handle row selection
   const handleRowSelect = (index: number) => {
     const newSelected = new Set(selectedRows);
     if (newSelected.has(index)) {
@@ -115,43 +111,47 @@ export const Table = ({
     onRowSelect?.(Array.from(newSelected).map((i) => sortedData[i]));
   };
 
-  // Handle select all
   const handleSelectAll = () => {
     if (selectedRows.size === sortedData.length) {
       setSelectedRows(new Set());
       onRowSelect?.([]);
-    } else {
-      const allIndices = new Set(sortedData.map((_, i) => i));
-      setSelectedRows(allIndices);
-      onRowSelect?.(sortedData);
+      return;
     }
+
+    const allIndices = new Set(sortedData.map((_, i) => i));
+    setSelectedRows(allIndices);
+    onRowSelect?.(sortedData);
   };
 
   const allSelected = selectedRows.size === sortedData.length && sortedData.length > 0;
   const someSelected = selectedRows.size > 0 && selectedRows.size < sortedData.length;
+  const breakpoint = mobileClasses[mobileBreakpoint];
+  const showCards = mobileMode === 'cards';
 
-  // Loading skeleton
   if (loading) {
     return (
       <div className={cn('overflow-x-auto rounded-lg border border-sage-200', className)}>
-        <table className="w-full">
-          <thead className="bg-sage-50 border-b border-sage-200">
+        <table className="w-full min-w-[640px]">
+          <thead className="border-b border-sage-200 bg-sage-50">
             <tr>
               {selectable && <th className="w-12 px-4 py-3"></th>}
               {columns.map((col) => (
-                <th key={col.key} className="px-4 py-3 text-left text-xs font-medium text-sage-700 uppercase tracking-wider">
-                  <div className="h-4 bg-sage-200 rounded animate-pulse w-20"></div>
+                <th
+                  key={col.key}
+                  className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-sage-700"
+                >
+                  <div className="h-4 w-20 animate-pulse rounded bg-sage-200"></div>
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-sage-200">
+          <tbody className="divide-y divide-sage-200 bg-white">
             {[...Array(5)].map((_, i) => (
               <tr key={i}>
                 {selectable && <td className="px-4 py-4"></td>}
                 {columns.map((col) => (
                   <td key={col.key} className="px-4 py-4">
-                    <div className="h-4 bg-sage-100 rounded animate-pulse"></div>
+                    <div className="h-4 animate-pulse rounded bg-sage-100"></div>
                   </td>
                 ))}
               </tr>
@@ -162,7 +162,6 @@ export const Table = ({
     );
   }
 
-  // Empty state
   if (sortedData.length === 0) {
     return (
       <div className={cn('overflow-x-auto rounded-lg border border-sage-200 bg-white', className)}>
@@ -173,12 +172,12 @@ export const Table = ({
     );
   }
 
-  return (
+  const desktopTable = (
     <div className={cn('overflow-x-auto rounded-lg border border-sage-200', className)}>
-      <table className="w-full">
+      <table className={cn('w-full', showCards && 'min-w-[640px]')}>
         <thead
           className={cn(
-            'bg-sage-50 border-b border-sage-200',
+            'border-b border-sage-200 bg-sage-50',
             stickyHeader && 'sticky top-0 z-10'
           )}
         >
@@ -188,63 +187,65 @@ export const Table = ({
                 <button
                   onClick={handleSelectAll}
                   className={cn(
-                    'w-5 h-5 rounded border-2 transition-all duration-200',
-                    'flex items-center justify-center',
+                    'flex h-5 w-5 items-center justify-center rounded border-2 transition-all duration-200',
                     allSelected
-                      ? 'bg-sage-600 border-sage-600'
+                      ? 'border-sage-600 bg-sage-600'
                       : someSelected
-                      ? 'bg-sage-300 border-sage-300'
-                      : 'border-sage-300 hover:border-sage-400'
+                        ? 'border-sage-300 bg-sage-300'
+                        : 'border-sage-300 hover:border-sage-400'
                   )}
                   aria-label="Select all rows"
                 >
                   {(allSelected || someSelected) && (
-                    <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                    <Check className="h-3 w-3 text-white" strokeWidth={3} />
                   )}
                 </button>
               </th>
             )}
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className={cn(
-                  'px-4 py-3 text-left text-xs font-medium text-sage-700 uppercase tracking-wider',
-                  col.className
-                )}
-              >
-                {sortable && col.sortable !== false ? (
-                  <button
-                    onClick={() => handleSort(col.key)}
-                    className="flex items-center gap-2 hover:text-sage-900 transition-colors group"
-                    aria-sort={
-                      sortColumn === col.key
-                        ? sortDirection === 'asc'
-                          ? 'ascending'
-                          : 'descending'
-                        : 'none'
-                    }
-                  >
-                    {col.header}
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                      {sortColumn === col.key ? (
-                        sortDirection === 'asc' ? (
-                          <ArrowUp className="w-4 h-4" />
+            {columns.map((col) => {
+              const sortState =
+                sortColumn === col.key
+                  ? sortDirection === 'asc'
+                    ? 'ascending'
+                    : 'descending'
+                  : 'none';
+
+              return (
+                <th
+                  key={col.key}
+                  className={cn(
+                    'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-sage-700',
+                    col.className
+                  )}
+                  aria-sort={sortable && col.sortable !== false ? sortState : undefined}
+                >
+                  {sortable && col.sortable !== false ? (
+                    <button
+                      onClick={() => handleSort(col.key)}
+                      className="group flex items-center gap-2 transition-colors hover:text-sage-900"
+                    >
+                      {col.header}
+                      <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                        {sortColumn === col.key ? (
+                          sortDirection === 'asc' ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4" />
+                          )
                         ) : (
-                          <ArrowDown className="w-4 h-4" />
-                        )
-                      ) : (
-                        <ArrowUpDown className="w-4 h-4" />
-                      )}
-                    </span>
-                  </button>
-                ) : (
-                  col.header
-                )}
-              </th>
-            ))}
+                          <ArrowUpDown className="h-4 w-4" />
+                        )}
+                      </span>
+                    </button>
+                  ) : (
+                    col.header
+                  )}
+                </th>
+              );
+            })}
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-sage-200">
+        <tbody className="divide-y divide-sage-200 bg-white">
           {sortedData.map((row, index) => (
             <tr
               key={index}
@@ -260,26 +261,22 @@ export const Table = ({
                   <button
                     onClick={() => handleRowSelect(index)}
                     className={cn(
-                      'w-5 h-5 rounded border-2 transition-all duration-200',
-                      'flex items-center justify-center',
+                      'flex h-5 w-5 items-center justify-center rounded border-2 transition-all duration-200',
                       selectedRows.has(index)
-                        ? 'bg-sage-600 border-sage-600'
+                        ? 'border-sage-600 bg-sage-600'
                         : 'border-sage-300 hover:border-sage-400'
                     )}
                     aria-label={`Select row ${index + 1}`}
                   >
                     {selectedRows.has(index) && (
-                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                      <Check className="h-3 w-3 text-white" strokeWidth={3} />
                     )}
                   </button>
                 </td>
               )}
               {columns.map((col) => (
-                <td
-                  key={col.key}
-                  className={cn('px-4 py-4 text-sm text-sage-900', col.className)}
-                >
-                  {col.render ? col.render(row[col.key], row) : row[col.key]}
+                <td key={col.key} className={cn('px-4 py-4 text-sm text-sage-900', col.className)}>
+                  {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
                 </td>
               ))}
             </tr>
@@ -287,5 +284,58 @@ export const Table = ({
         </tbody>
       </table>
     </div>
+  );
+
+  const mobileCards = (
+    <div className={cn('space-y-3', className)}>
+      {sortedData.map((row, index) => (
+        <article
+          key={index}
+          className={cn(
+            'rounded-lg border border-sage-200 bg-white p-4 shadow-sm',
+            selectedRows.has(index) && 'border-sage-400 bg-sage-50/40'
+          )}
+        >
+          {selectable && (
+            <div className="mb-3 flex justify-end">
+              <button
+                onClick={() => handleRowSelect(index)}
+                className={cn(
+                  'flex h-5 w-5 items-center justify-center rounded border-2 transition-all duration-200',
+                  selectedRows.has(index)
+                    ? 'border-sage-600 bg-sage-600'
+                    : 'border-sage-300 hover:border-sage-400'
+                )}
+                aria-label={`Select row ${index + 1}`}
+              >
+                {selectedRows.has(index) && (
+                  <Check className="h-3 w-3 text-white" strokeWidth={3} />
+                )}
+              </button>
+            </div>
+          )}
+
+          <dl className="space-y-2">
+            {columns.map((col) => (
+              <div key={col.key} className="grid grid-cols-2 gap-3 text-sm">
+                <dt className="font-medium text-sage-700">{col.mobileLabel || col.header}</dt>
+                <dd className="text-sage-900">
+                  {col.render ? col.render(row[col.key], row) : String(row[col.key] ?? '')}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </article>
+      ))}
+    </div>
+  );
+
+  if (!showCards) return desktopTable;
+
+  return (
+    <>
+      <div className={breakpoint.cards}>{mobileCards}</div>
+      <div className={breakpoint.table}>{desktopTable}</div>
+    </>
   );
 };

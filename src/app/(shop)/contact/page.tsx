@@ -1,6 +1,5 @@
 'use client';
 
-import type { Metadata } from 'next';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -97,15 +96,15 @@ export default function ContactPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-10 animate-slide-up text-center">
-        <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">Contáctanos</h1>
-        <p className="mt-4 text-lg text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 sm:text-5xl">Contáctanos</h1>
+        <p className="mt-4 text-base text-gray-600 sm:text-lg">
           ¿Tienes alguna pregunta o sugerencia? Completa el formulario y nos pondremos en contacto
           contigo.
         </p>
       </div>
 
       <Card className="animate-slide-up [animation-delay:100ms]">
-        <CardContent className="p-8">
+        <CardContent className="p-5 sm:p-8">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
               <Input
@@ -159,7 +158,7 @@ export default function ContactPage() {
                 size="lg"
                 variant="gradient-sage"
                 disabled={isSubmitting}
-                className="min-w-[180px]"
+                className="w-full sm:min-w-[180px] sm:w-auto"
               >
                 {isSubmitting ? (
                   <>
@@ -206,3 +205,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

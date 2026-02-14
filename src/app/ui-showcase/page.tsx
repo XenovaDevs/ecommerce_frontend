@@ -85,19 +85,22 @@ export default function UIShowcasePage() {
     {
       key: 'status',
       header: 'Status',
-      render: (value: string) => (
-        <span
-          className={`px-2 py-1 text-xs font-medium rounded-full ${
-            value === 'Active'
-              ? 'bg-green-100 text-green-700'
-              : value === 'Low Stock'
-              ? 'bg-amber-100 text-amber-700'
-              : 'bg-red-100 text-red-700'
-          }`}
-        >
-          {value}
-        </span>
-      ),
+      render: (value: unknown) => {
+        const status = String(value ?? '');
+        return (
+          <span
+            className={`px-2 py-1 text-xs font-medium rounded-full ${
+              status === 'Active'
+                ? 'bg-green-100 text-green-700'
+                : status === 'Low Stock'
+                  ? 'bg-amber-100 text-amber-700'
+                  : 'bg-red-100 text-red-700'
+            }`}
+          >
+            {status}
+          </span>
+        );
+      },
     },
     {
       key: 'actions',

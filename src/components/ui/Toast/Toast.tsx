@@ -20,7 +20,7 @@
  */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CheckCircle2, XCircle, AlertTriangle, Info, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -62,6 +62,13 @@ export const Toast = ({ id, type, message, duration = 5000, onClose }: ToastProp
   const config = toastConfig[type];
   const Icon = config.icon;
 
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onClose(id);
+    }, 300); // Match animation duration
+  }, [id, onClose]);
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
@@ -70,14 +77,7 @@ export const Toast = ({ id, type, message, duration = 5000, onClose }: ToastProp
 
       return () => clearTimeout(timer);
     }
-  }, [duration, id]);
-
-  const handleClose = () => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onClose(id);
-    }, 300); // Match animation duration
-  };
+  }, [duration, handleClose]);
 
   return (
     <div
@@ -85,7 +85,7 @@ export const Toast = ({ id, type, message, duration = 5000, onClose }: ToastProp
       aria-live="polite"
       className={cn(
         'flex items-start gap-3 p-4 rounded-lg border shadow-lg',
-        'min-w-[320px] max-w-md',
+        'w-[calc(100vw-2rem)] max-w-md sm:w-auto sm:min-w-[320px]',
         'transition-all duration-300',
         isExiting
           ? 'translate-x-full opacity-0'

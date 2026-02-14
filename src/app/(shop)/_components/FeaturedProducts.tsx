@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { Button } from '@/components/ui';
 import { ProductCard, productsService } from '@/features/products';
 import { useCart } from '@/features/cart';
-import { useInView } from '@/hooks/useInView';
 import { ROUTES } from '@/constants';
 import { QuickViewModal } from './QuickViewModal';
+import AnimatedContent from '@/components/reactbits/Animations/AnimatedContent/AnimatedContent';
 import type { Product } from '@/features/products';
 
 export function FeaturedProducts() {
@@ -17,7 +17,6 @@ export function FeaturedProducts() {
   const [error, setError] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const { addItem } = useCart();
-  const { ref, isInView } = useInView();
 
   const fetchProducts = () => {
     setIsLoading(true);
@@ -65,7 +64,7 @@ export function FeaturedProducts() {
   }
 
   return (
-    <div ref={ref} className="mt-12">
+    <div className="mt-12">
       {isLoading ? (
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -81,18 +80,18 @@ export function FeaturedProducts() {
       ) : (
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {products.map((product, i) => (
-            <div
+            <AnimatedContent
               key={product.id}
-              className={`transition-all duration-600 ${
-                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
-              style={{ transitionDelay: `${i * 80}ms` }}
+              distance={40}
+              duration={0.5}
+              delay={i * 0.08}
+              ease="power3.out"
             >
               <ProductCard
                 product={product}
                 onAddToCart={handleAddToCart}
               />
-            </div>
+            </AnimatedContent>
           ))}
         </div>
       )}

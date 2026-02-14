@@ -46,8 +46,8 @@ export function Header() {
         Saltar al contenido principal
       </a>
 
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-2 sm:gap-4">
           {/* Logo - Sophisticated typography */}
           <div className="flex items-center">
             <Link
@@ -79,7 +79,7 @@ export function Header() {
           </div>
 
           {/* Right side actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Search - Mobile */}
             <Button
               variant="ghost"
@@ -120,9 +120,9 @@ export function Header() {
                   <UserMenu user={user} />
                 ) : (
                   <Link href={ROUTES.LOGIN}>
-                    <Button variant="ghost" size="sm">
-                      <User className="mr-2 h-4 w-4" />
-                      {UIMessages.AUTH.LOGIN}
+                    <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                      <User className="h-4 w-4 sm:mr-2" />
+                      <span className="hidden sm:inline">{UIMessages.AUTH.LOGIN}</span>
                     </Button>
                   </Link>
                 )}
@@ -152,7 +152,7 @@ export function Header() {
       <div
         className={cn(
           'lg:hidden transition-sophisticated overflow-hidden',
-          isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          isMobileMenuOpen ? 'max-h-[70vh] opacity-100' : 'max-h-0 opacity-0'
         )}
       >
         <div className="border-t border-sage-gray-200 px-4 py-4 bg-sage-gray-50/50 backdrop-blur-sm">

@@ -17,7 +17,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8 sm:py-12">
       {/* Logo */}
       <Link href={ROUTES.HOME} className="mb-8">
         <span className="text-2xl font-bold text-primary">
@@ -26,10 +26,10 @@ export default function AuthLayout({
       </Link>
 
       {/* Content */}
-      <main className="w-full max-w-md">{children}</main>
+      <main className="w-full max-w-md sm:max-w-lg">{children}</main>
 
       {/* Footer */}
-      <p className="mt-8 text-center text-sm text-gray-500">
+      <p className="mt-8 px-4 text-center text-sm text-gray-500">
         &copy; {new Date().getFullYear()} {APP_CONFIG.SITE_NAME}. Todos los derechos reservados.
       </p>
     </div>

@@ -24,6 +24,7 @@ interface ModalProps {
   title?: string;
   children: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  fullOnMobile?: boolean;
   showCloseButton?: boolean;
   closeOnOverlayClick?: boolean;
   className?: string;
@@ -43,6 +44,7 @@ export function Modal({
   title,
   children,
   size = 'md',
+  fullOnMobile = true,
   showCloseButton = true,
   closeOnOverlayClick = true,
   className,
@@ -73,12 +75,14 @@ export function Modal({
         aria-labelledby={title ? 'modal-title' : undefined}
       >
         {/* Modal container */}
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
           <div
             className={cn(
               'w-full rounded-2xl bg-white shadow-2xl',
               'animate-scale-in',
               'border border-gray-100',
+              'max-h-[90vh] overflow-y-auto',
+              fullOnMobile && 'h-[calc(100vh-1.5rem)] sm:h-auto',
               sizeClasses[size],
               className
             )}
@@ -86,11 +90,11 @@ export function Modal({
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+              <div className="flex items-center justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
                 {title && (
                   <h2
                     id="modal-title"
-                    className="text-xl font-semibold text-gray-900"
+                    className="text-lg font-semibold text-gray-900 sm:text-xl"
                   >
                     {title}
                   </h2>
@@ -108,7 +112,7 @@ export function Modal({
             )}
 
             {/* Content */}
-            <div className="px-6 py-5">{children}</div>
+            <div className="px-4 py-4 sm:px-6 sm:py-5">{children}</div>
           </div>
         </div>
       </div>
@@ -125,7 +129,7 @@ export function ModalFooter({ children, className }: ModalFooterProps) {
   return (
     <div
       className={cn(
-        'flex items-center justify-end gap-3 border-t border-gray-100 bg-gray-50/50 px-6 py-4 rounded-b-2xl',
+        'flex flex-col-reverse items-stretch justify-end gap-3 rounded-b-2xl border-t border-gray-100 bg-gray-50/50 px-4 py-4 sm:flex-row sm:items-center sm:px-6',
         className
       )}
     >

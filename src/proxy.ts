@@ -53,8 +53,7 @@ export function proxy(request: NextRequest) {
   const csp = [
     "default-src 'self'",
     `script-src ${scriptSrc}`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
-    "style-src-attr 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' blob: https:",
     `connect-src ${connectSrc}`,

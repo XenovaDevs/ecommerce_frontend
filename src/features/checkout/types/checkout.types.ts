@@ -21,6 +21,7 @@ export interface OrderAddress {
   id?: number;
   type?: string;
   name: string;
+  email?: string;
   phone?: string;
   address: string;
   address_line_2?: string;
@@ -36,6 +37,7 @@ export interface ShippingAddressForm {
   id?: number;
   first_name: string;
   last_name: string;
+  email: string;
   street: string;
   number: string;
   apartment?: string;
@@ -163,6 +165,7 @@ export interface OrderResponse {
 export function formAddressToBackend(form: ShippingAddressForm): OrderAddress {
   return {
     name: `${form.first_name} ${form.last_name}`.trim(),
+    email: form.email,
     phone: form.phone,
     address: `${form.street} ${form.number}`.trim(),
     address_line_2: form.apartment || undefined,

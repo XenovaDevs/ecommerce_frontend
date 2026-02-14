@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { cartService } from '../services';
 import type {
+  Cart,
   CartItem,
   AppliedCoupon,
   CartTotals,
@@ -20,11 +21,6 @@ import type {
 
 /**
  * @ai-context Cart context provider for global cart state management.
- * @ai-flow
- *   1. On mount, fetches cart from API (or localStorage for anonymous)
- *   2. Provides methods to add, update, remove items
- *   3. Syncs with backend on every mutation
- *   4. Calculates totals locally for optimistic UI
  */
 
 const EMPTY_TOTALS: CartTotals = {
@@ -47,46 +43,28 @@ export function CartProvider({ children }: CartProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Calculate item count
   const itemCount = useMemo(
     () => items.reduce((sum, item) => sum + item.quantity, 0),
     [items]
   );
 
-  // Calculate totals locally for optimistic updates
-  const calculateTotals = useCallback(
-    (cartItems: CartItem[], appliedCoupon: AppliedCoupon | null): CartTotals => {
-      const subtotal = cartItems.reduce(
-        (sum, item) => sum + item.product.price * item.quantity,
-        0
-      );
+  const syncCartState = useCallback((cart: Cart) => {
+    setItems(cart.items);
+    setCoupon(cart.coupon || null);
+    setTotals(cart.totals);
+  }, []);
 
-      let discount = 0;
-      if (appliedCoupon) {
-        if (appliedCoupon.discount_type === 'percentage') {
-          discount = subtotal * (appliedCoupon.discount_value / 100);
-        } else {
-          discount = appliedCoupon.discount_value;
-        }
-      }
+  const refreshCart = useCallback(async () => {
+    const cart = await cartService.getCart();
+    syncCartState(cart);
+    return cart;
+  }, [syncCartState]);
 
-      const total = subtotal - discount;
-
-      return { subtotal, discount, tax: 0, total };
-    },
-    []
-  );
-
-  // Fetch cart on mount
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const cart = await cartService.getCart();
-        setItems(cart.items);
-        setCoupon(cart.coupon || null);
-        setTotals(cart.totals);
+        await refreshCart();
       } catch (err) {
-        // Cart might not exist yet, that's OK
         console.error('Failed to fetch cart:', err);
       } finally {
         setIsLoading(false);
@@ -94,19 +72,16 @@ export function CartProvider({ children }: CartProviderProps) {
     };
 
     fetchCart();
-  }, []);
+  }, [refreshCart]);
 
-  // Add item to cart
   const addItem = useCallback(
     async (data: AddToCartData) => {
       setIsLoading(true);
       setError(null);
 
       try {
-        const cart = await cartService.addItem(data);
-        setItems(cart.items);
-        setTotals(cart.totals);
-        if (cart.coupon) setCoupon(cart.coupon);
+        await cartService.addItem(data);
+        await refreshCart();
       } catch (err) {
         setError('Error al agregar al carrito');
         throw err;
@@ -114,57 +89,45 @@ export function CartProvider({ children }: CartProviderProps) {
         setIsLoading(false);
       }
     },
-    []
+    [refreshCart]
   );
 
-  // Update item quantity
   const updateItem = useCallback(
     async (itemId: string, quantity: number) => {
-      // Optimistic update
       setItems((prev) =>
-        prev.map((item) =>
-          item.id === itemId ? { ...item, quantity } : item
-        )
+        prev.map((item) => (item.id === itemId ? { ...item, quantity } : item))
       );
 
       try {
-        const cart = await cartService.updateItem(itemId, { quantity });
-        setItems(cart.items);
-        setTotals(cart.totals);
+        await cartService.updateItem(itemId, { quantity });
+        await refreshCart();
       } catch (err) {
-        // Revert on error
-        const cart = await cartService.getCart();
-        setItems(cart.items);
-        setTotals(cart.totals);
+        await refreshCart();
         setError('Error al actualizar cantidad');
         throw err;
       }
     },
-    []
+    [refreshCart]
   );
 
-  // Remove item from cart
   const removeItem = useCallback(
     async (itemId: string) => {
-      // Optimistic update
       const previousItems = items;
       setItems((prev) => prev.filter((item) => item.id !== itemId));
 
       try {
-        const cart = await cartService.removeItem(itemId);
-        setItems(cart.items);
-        setTotals(cart.totals);
+        await cartService.removeItem(itemId);
+        await refreshCart();
       } catch (err) {
-        // Revert on error
         setItems(previousItems);
+        await refreshCart();
         setError('Error al eliminar del carrito');
         throw err;
       }
     },
-    [items]
+    [items, refreshCart]
   );
 
-  // Clear cart
   const clearCart = useCallback(async () => {
     setIsLoading(true);
 
@@ -181,36 +144,38 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   }, []);
 
-  // Apply coupon
-  const applyCoupon = useCallback(async (code: string) => {
-    setIsLoading(true);
-    setError(null);
+  const applyCoupon = useCallback(
+    async (code: string) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const cart = await cartService.applyCoupon(code);
-      setCoupon(cart.coupon || null);
-      setTotals(cart.totals);
-    } catch (err) {
-      setError('Cupón inválido o expirado');
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        const cart = await cartService.applyCoupon(code);
+        syncCartState(cart);
+      } catch (err) {
+        setError('Cupón inválido o expirado');
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [syncCartState]
+  );
 
-  // Remove coupon
-  const removeCoupon = useCallback(async () => {
-    if (!coupon) return;
+  const removeCoupon = useCallback(
+    async () => {
+      if (!coupon) return;
 
-    try {
-      const cart = await cartService.removeCoupon(coupon.code);
-      setCoupon(null);
-      setTotals(cart.totals);
-    } catch (err) {
-      setError('Error al remover cupón');
-      throw err;
-    }
-  }, [coupon]);
+      try {
+        const cart = await cartService.removeCoupon(coupon.code);
+        syncCartState(cart);
+      } catch (err) {
+        setError('Error al remover cupón');
+        throw err;
+      }
+    },
+    [coupon, syncCartState]
+  );
 
   const value: CartContextType = {
     items,

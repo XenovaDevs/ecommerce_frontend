@@ -40,6 +40,31 @@ const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue = [];
 };
 
+function createSessionId(): string {
+  if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getOrCreateCartSessionId(): string | null {
+  if (typeof window === 'undefined') return null;
+
+  const existing = Cookies.get(STORAGE_KEYS.CART_ID);
+  if (existing) return existing;
+
+  const isSecure = window.location.protocol === 'https:';
+  const sessionId = createSessionId();
+  Cookies.set(STORAGE_KEYS.CART_ID, sessionId, {
+    expires: 7,
+    sameSite: 'lax',
+    secure: isSecure,
+  });
+
+  return sessionId;
+}
+
 // Request interceptor - Add auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -47,6 +72,12 @@ apiClient.interceptors.request.use(
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    const sessionId = getOrCreateCartSessionId();
+    if (sessionId && config.headers) {
+      config.headers['X-Session-ID'] = sessionId;
+    }
+
     return config;
   },
   (error) => Promise.reject(error)

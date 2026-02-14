@@ -13,7 +13,7 @@
 'use client';
 
 import { createContext, useContext, useState, useCallback } from 'react';
-import { Toast, ToastType, ToastProps } from './Toast';
+import { Toast, ToastType } from './Toast';
 
 interface ToastContextValue {
   success: (message: string, duration?: number) => void;
@@ -56,7 +56,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 
       {/* Toast Container */}
       <div
-        className="fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"
+        className="fixed inset-x-4 top-4 z-50 flex flex-col gap-3 pointer-events-none sm:inset-x-auto sm:right-4"
         aria-live="polite"
         aria-atomic="true"
       >

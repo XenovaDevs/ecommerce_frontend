@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import { Filter } from 'lucide-react';
 import { Button, Modal } from '@/components/ui';
 import {
   ProductGrid,
@@ -12,6 +11,7 @@ import {
   useCategories,
 } from '@/features/products';
 import { useCart } from '@/features/cart';
+import type { Product } from '@/features/products/types';
 
 /**
  * @ai-context Products listing page with filters and pagination.
@@ -36,7 +36,7 @@ function ProductsContent() {
   const { categories } = useCategories();
   const { addItem } = useCart();
 
-  const handleAddToCart = async (product: any) => {
+  const handleAddToCart = async (product: Product) => {
     try {
       await addItem({
         product_id: product.id,
@@ -161,8 +161,10 @@ function ProductsContent() {
         isOpen={isMobileFiltersOpen}
         onClose={() => setIsMobileFiltersOpen(false)}
         title="Filtros"
+        fullOnMobile
+        className="sm:max-w-lg"
       >
-        <div className="p-4">
+        <div className="p-1">
           <ProductFiltersComponent
             categories={categories}
             filters={filters}
@@ -170,7 +172,7 @@ function ProductsContent() {
             onReset={resetFilters}
             isLoading={isLoading}
           />
-          <div className="mt-6 flex gap-3">
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button
               variant="outline"
               onClick={() => setIsMobileFiltersOpen(false)}
@@ -201,7 +203,7 @@ export default function ProductsPage() {
           <div className="h-10 w-56 bg-gradient-to-r from-gray-200 to-gray-100 rounded-lg animate-shimmer mb-3" />
           <div className="h-6 w-72 bg-gradient-to-r from-gray-200 to-gray-100 rounded-lg animate-shimmer" />
         </div>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 8 }).map((_, i) => (
             <div
               key={i}

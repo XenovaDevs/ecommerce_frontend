@@ -48,6 +48,9 @@ export const API_ENDPOINTS = {
   CHECKOUT: {
     PROCESS: '/checkout',
     VALIDATE: '/checkout/validate',
+    GUEST_PROCESS: '/checkout/guest/process',
+    GUEST_VALIDATE: '/checkout/guest/validate',
+    GUEST_PAYMENT_METHODS: '/checkout/guest/payment-methods',
     SHIPPING_QUOTE: '/shipping/quote',
     PAYMENT_PREFERENCE: '/checkout/payment-preference',
   },

@@ -36,12 +36,12 @@ export function QuickViewModal({ product, isOpen, onClose, onAddToCart }: QuickV
     >
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div
-          className="w-full max-w-2xl rounded-2xl bg-white shadow-2xl animate-scale-in border border-gray-100 overflow-hidden"
+          className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-100 bg-white shadow-2xl animate-scale-in"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="grid sm:grid-cols-2">
             {/* Image */}
-            <div className="relative aspect-square bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 sm:aspect-square">
               <Image
                 src={imageError ? '/images/placeholder-product.svg' : mainImage}
                 alt={product.name}
@@ -64,7 +64,7 @@ export function QuickViewModal({ product, isOpen, onClose, onAddToCart }: QuickV
             </div>
 
             {/* Info */}
-            <div className="relative flex flex-col p-6">
+            <div className="relative flex flex-col p-4 sm:p-6">
               <button
                 onClick={onClose}
                 className="absolute right-4 top-4 hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"

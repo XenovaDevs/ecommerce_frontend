@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, MapPin, CreditCard, Package, Truck } from 'lucide-react';
 import { Badge, Button, Card, CardContent } from '@/components/ui';
@@ -34,7 +33,6 @@ const statusConfig: Record<
 
 export default function OrderDetailPage({ params }: OrderDetailPageProps) {
   const resolvedParams = React.use(params);
-  const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +89,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
           <ChevronLeft className="mr-1 h-4 w-4" />
           Volver a mis pedidos
         </Link>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Pedido #{order.order_number}
@@ -126,7 +124,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                 {order.items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-4 pb-4 border-b last:border-b-0 last:pb-0"
+                    className="flex flex-col gap-2 border-b pb-4 last:border-b-0 last:pb-0 sm:flex-row sm:items-center sm:gap-4"
                   >
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">
@@ -137,7 +135,7 @@ export default function OrderDetailPage({ params }: OrderDetailPageProps) {
                         <span>Precio: {formatCurrency(item.price)}</span>
                       </div>
                     </div>
-                    <p className="font-semibold text-gray-900">
+                    <p className="font-semibold text-gray-900 sm:text-right">
                       {formatCurrency(item.total)}
                     </p>
                   </div>

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
 import {
@@ -25,7 +26,7 @@ export const dynamic = 'force-dynamic';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { items, totals, isLoading: cartLoading } = useCart();
   const {
     step,
@@ -45,14 +46,7 @@ export default function CheckoutPage() {
     setShippingOption,
     setPaymentMethod,
     processCheckout,
-  } = useCheckout();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!isAuthenticated && !cartLoading) {
-      router.push(`${ROUTES.LOGIN}?redirect=${ROUTES.CHECKOUT}`);
-    }
-  }, [isAuthenticated, cartLoading, router]);
+  } = useCheckout({ isGuestCheckout: !isAuthenticated });
 
   // Redirect to cart if empty
   useEffect(() => {
@@ -61,7 +55,7 @@ export default function CheckoutPage() {
     }
   }, [cartLoading, items.length, router]);
 
-  if (cartLoading || !isAuthenticated || items.length === 0) {
+  if (cartLoading || items.length === 0) {
     return (
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="animate-slide-up space-y-6">
@@ -148,11 +142,41 @@ export default function CheckoutPage() {
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-12 text-center animate-slide-up">
-        <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">Finalizar compra</h1>
-        <p className="mt-3 text-lg text-gray-600">
+        <h1 className="text-3xl font-bold text-gray-900 sm:text-5xl">Finalizar compra</h1>
+        <p className="mt-3 text-base text-gray-600 sm:text-lg">
           Completa tu pedido de forma segura y rápida
         </p>
       </div>
+
+      {/* Optional Auth */}
+      {!authLoading && !isAuthenticated && (
+        <Card variant="glass" className="mb-8 border border-primary/20">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  ¿Querés una compra más rápida?
+                </p>
+                <p className="text-sm text-gray-600">
+                  Podés continuar como invitado o iniciar sesión para usar tus datos guardados.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Link href={`${ROUTES.LOGIN}?redirect=${ROUTES.CHECKOUT}`}>
+                  <Button variant="outline" size="md" className="w-full sm:w-auto">
+                    Iniciar sesión
+                  </Button>
+                </Link>
+                <Link href={`${ROUTES.REGISTER}?redirect=${ROUTES.CHECKOUT}`}>
+                  <Button size="md" variant="gradient-sage" className="w-full sm:w-auto">
+                    Crear cuenta
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Wizard */}
       <div className="mb-10 animate-slide-up" style={{ animationDelay: '0.1s' }}>
@@ -237,13 +261,13 @@ export default function CheckoutPage() {
       )}
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between gap-4 animate-fade-in">
+      <div className="flex flex-col-reverse items-stretch gap-3 animate-fade-in sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <Button
           variant="outline"
           size="xl"
           onClick={handleBack}
           disabled={isLoading}
-          className="shadow-sm"
+          className="w-full shadow-sm sm:w-auto"
         >
           <ChevronLeft className="mr-2 h-5 w-5" />
           {step === 'shipping' ? 'Volver al carrito' : 'Atrás'}
@@ -255,7 +279,7 @@ export default function CheckoutPage() {
           isLoading={isLoading}
           size="xl"
           variant="gradient-sage"
-          className="shadow-xl shadow-primary/20"
+          className="w-full shadow-xl shadow-primary/20 sm:w-auto"
         >
           {getNextButtonText()}
           {step !== 'review' && <ChevronRight className="ml-2 h-5 w-5" />}
@@ -264,3 +288,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+

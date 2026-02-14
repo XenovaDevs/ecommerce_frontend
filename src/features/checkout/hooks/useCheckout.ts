@@ -47,7 +47,11 @@ interface UseCheckoutReturn {
 
 const STEP_ORDER: CheckoutStep[] = ['shipping', 'payment', 'review'];
 
-export function useCheckout(): UseCheckoutReturn {
+interface UseCheckoutOptions {
+  isGuestCheckout?: boolean;
+}
+
+export function useCheckout({ isGuestCheckout = false }: UseCheckoutOptions = {}): UseCheckoutReturn {
   const router = useRouter();
   const { clearCart } = useCart();
 
@@ -78,7 +82,7 @@ export function useCheckout(): UseCheckoutReturn {
       }
 
       // Also fetch payment methods
-      const methods = await checkoutService.getPaymentMethods();
+      const methods = await checkoutService.getPaymentMethods(isGuestCheckout);
       // Filter to only enabled methods
       setPaymentMethods(methods.filter((m) => m.enabled !== false));
     } catch (err) {
@@ -87,7 +91,7 @@ export function useCheckout(): UseCheckoutReturn {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [isGuestCheckout]);
 
   // Set shipping option
   const setShippingOption = useCallback((option: ShippingOption) => {
@@ -147,7 +151,7 @@ export function useCheckout(): UseCheckoutReturn {
 
     try {
       // Validate cart first
-      const validation = await checkoutService.validateCart();
+      const validation = await checkoutService.validateCart(isGuestCheckout);
       if (!validation.valid) {
         setError(validation.errors?.join(', ') || 'Error en el carrito');
         return null;
@@ -157,11 +161,14 @@ export function useCheckout(): UseCheckoutReturn {
       const backendAddress = formAddressToBackend(shippingAddress);
 
       // Process checkout - backend creates order + payment preference in one step
-      const result = await checkoutService.processCheckout({
-        shipping_address: backendAddress,
-        shipping_cost: selectedShippingOption.price,
-        payment_method: selectedPaymentMethod.id,
-      });
+      const result = await checkoutService.processCheckout(
+        {
+          shipping_address: backendAddress,
+          shipping_cost: selectedShippingOption.price,
+          payment_method: selectedPaymentMethod.id,
+        },
+        isGuestCheckout
+      );
 
       const order = result.order;
 
@@ -182,7 +189,7 @@ export function useCheckout(): UseCheckoutReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [shippingAddress, selectedShippingOption, selectedPaymentMethod, clearCart, router]);
+  }, [shippingAddress, selectedShippingOption, selectedPaymentMethod, clearCart, router, isGuestCheckout]);
 
   // Reset checkout state
   const reset = useCallback(() => {

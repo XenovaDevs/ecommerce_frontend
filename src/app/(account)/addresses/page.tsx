@@ -15,6 +15,7 @@ const mockAddresses: ShippingAddressForm[] = [
     id: 1,
     first_name: 'Juan',
     last_name: 'Pérez',
+    email: 'juan@example.com',
     street: 'Av. Corrientes',
     number: '1234',
     apartment: '5B',
@@ -29,6 +30,7 @@ const mockAddresses: ShippingAddressForm[] = [
     id: 2,
     first_name: 'Juan',
     last_name: 'Pérez',
+    email: 'juan@example.com',
     street: 'Calle Falsa',
     number: '123',
     apartment: undefined,
@@ -90,9 +92,9 @@ export default function AddressesPage() {
   if (addresses.length === 0) {
     return (
       <div>
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-2xl font-bold text-gray-900">Mis direcciones</h2>
-          <Button onClick={handleAddNew}>
+          <Button onClick={handleAddNew} className="w-full sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             Agregar dirección
           </Button>
@@ -106,7 +108,7 @@ export default function AddressesPage() {
             <p className="text-gray-600 mb-6">
               Agrega una dirección de envío para completar tus compras más rápido
             </p>
-            <Button onClick={handleAddNew}>
+            <Button onClick={handleAddNew} className="w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Agregar dirección
             </Button>
@@ -118,9 +120,9 @@ export default function AddressesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Mis direcciones</h2>
-        <Button onClick={handleAddNew}>
+        <Button onClick={handleAddNew} className="w-full sm:w-auto">
           <Plus className="mr-2 h-4 w-4" />
           Agregar dirección
         </Button>
@@ -134,7 +136,7 @@ export default function AddressesPage() {
           >
             <CardContent className="p-6">
               {/* Header */}
-              <div className="mb-4 flex items-start justify-between">
+              <div className="mb-4 flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-gray-600" />
                   {address.is_default && (
@@ -202,11 +204,11 @@ export default function AddressesPage() {
         onClose={() => setIsModalOpen(false)}
         title={editingAddress ? 'Editar dirección' : 'Nueva dirección'}
       >
-        <div className="p-6">
+        <div className="p-2 sm:p-4">
           <p className="text-sm text-gray-600 mb-4">
             Formulario de dirección - TODO: Implementar con ShippingStep component
           </p>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <Button variant="outline" onClick={() => setIsModalOpen(false)} className="flex-1">
               Cancelar
             </Button>
@@ -219,3 +221,5 @@ export default function AddressesPage() {
     </div>
   );
 }
+
+

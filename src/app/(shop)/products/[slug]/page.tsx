@@ -119,7 +119,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
           Volver a productos
         </Link>
-        <nav className="flex items-center gap-2 text-sm text-gray-500">
+        <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm text-gray-500">
           <Link href={ROUTES.HOME} className="hover:text-primary transition-colors">
             Inicio
           </Link>
@@ -195,15 +195,15 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
         {/* Product Info */}
         <div className="animate-slide-in-right">
-          <h1 className="text-4xl font-bold text-gray-900 leading-tight lg:text-5xl">{product.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 leading-tight sm:text-4xl lg:text-5xl">{product.name}</h1>
 
           {/* Price */}
-          <div className="mt-6 flex items-baseline gap-4">
-            <span className="text-4xl font-bold text-gray-900 lg:text-5xl">
+          <div className="mt-6 flex flex-wrap items-baseline gap-3 sm:gap-4">
+            <span className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
               {formatCurrency(product.price)}
             </span>
             {hasDiscount && (
-              <span className="text-2xl text-gray-400 line-through">
+              <span className="text-xl text-gray-400 line-through sm:text-2xl">
                 {formatCurrency(product.compare_at_price!)}
               </span>
             )}
@@ -240,7 +240,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               <div className="inline-flex items-center rounded-xl border-2 border-gray-200 bg-white shadow-sm">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-5 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-l-xl"
+                  className="rounded-l-xl px-4 py-3 text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:px-5"
                 >
                   <span className="text-lg font-semibold">−</span>
                 </button>
@@ -249,7 +249,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 </span>
                 <button
                   onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="px-5 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors rounded-r-xl"
+                  className="rounded-r-xl px-4 py-3 text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:px-5"
                 >
                   <span className="text-lg font-semibold">+</span>
                 </button>
@@ -258,7 +258,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           )}
 
           {/* Actions */}
-          <div className="mt-10 flex gap-4">
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
             <Button
               size="xl"
               variant="gradient-sage"
@@ -270,16 +270,16 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               <ShoppingCart className="mr-2 h-5 w-5" />
               {isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
             </Button>
-            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md">
+            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md sm:w-auto">
               <Heart className="h-5 w-5" />
             </Button>
-            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md">
+            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md sm:w-auto">
               <Share2 className="h-5 w-5" />
             </Button>
           </div>
 
           {/* Features */}
-          <div className="mt-10 rounded-2xl bg-gradient-to-br from-gray-50 to-white border border-gray-100 p-6 shadow-sm space-y-4">
+          <div className="mt-10 space-y-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-gray-50 to-white p-4 shadow-sm sm:p-6">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <Truck className="h-6 w-6" />
@@ -336,7 +336,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}

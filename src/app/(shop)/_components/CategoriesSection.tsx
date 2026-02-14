@@ -5,16 +5,15 @@ import { AlertCircle, RefreshCw, Layers } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui';
 import { productsService } from '@/features/products';
-import { useInView } from '@/hooks/useInView';
 import { ROUTES } from '@/constants';
 import { CategoryCard } from './CategoryCard';
+import AnimatedContent from '@/components/reactbits/Animations/AnimatedContent/AnimatedContent';
 import type { Category } from '@/features/products';
 
 export function CategoriesSection() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { ref, isInView } = useInView();
 
   const fetchCategories = () => {
     setIsLoading(true);
@@ -56,7 +55,7 @@ export function CategoriesSection() {
   }
 
   return (
-    <div ref={ref} className="mt-12">
+    <div className="mt-12">
       {isLoading ? (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -66,13 +65,20 @@ export function CategoriesSection() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
           {categories.map((category, i) => (
-            <CategoryCard
+            <AnimatedContent
               key={category.id}
-              category={category}
-              index={i}
-              isInView={isInView}
-              featured={i < 2}
-            />
+              distance={40}
+              duration={0.5}
+              delay={i * 0.08}
+              ease="power3.out"
+            >
+              <CategoryCard
+                category={category}
+                index={i}
+                isInView={true}
+                featured={i < 2}
+              />
+            </AnimatedContent>
           ))}
         </div>
       )}

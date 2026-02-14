@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui';
 import { ProductCard, productsService } from '@/features/products';
 import { useCart } from '@/features/cart';
-import { useInView } from '@/hooks/useInView';
 import { ROUTES } from '@/constants';
+import AnimatedContent from '@/components/reactbits/Animations/AnimatedContent/AnimatedContent';
 import type { Product } from '@/features/products';
 
 export function NewArrivals() {
@@ -18,7 +18,6 @@ export function NewArrivals() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
   const { addItem } = useCart();
-  const { ref, isInView } = useInView();
 
   const fetchProducts = () => {
     setIsLoading(true);
@@ -88,7 +87,7 @@ export function NewArrivals() {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div className="relative">
       {/* Navigation arrows */}
       {!isLoading && products.length > 3 && (
         <>
@@ -131,15 +130,16 @@ export function NewArrivals() {
           className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
         >
           {products.map((product, i) => (
-            <div
+            <AnimatedContent
               key={product.id}
-              className={`min-w-[260px] max-w-[280px] flex-shrink-0 snap-start transition-all duration-500 ${
-                isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
-              style={{ transitionDelay: `${i * 80}ms` }}
+              distance={40}
+              duration={0.5}
+              delay={i * 0.08}
+              ease="power3.out"
+              className="min-w-[260px] max-w-[280px] flex-shrink-0 snap-start"
             >
               <ProductCard product={product} onAddToCart={handleAddToCart} />
-            </div>
+            </AnimatedContent>
           ))}
         </div>
       )}

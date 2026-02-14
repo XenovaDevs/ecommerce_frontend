@@ -100,10 +100,10 @@ export default function OrdersPage() {
             <Link key={order.id} href={ROUTES.ORDER_DETAIL(order.id.toString())}>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="p-6">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="flex-1">
                       {/* Order Number and Date */}
-                      <div className="flex items-center gap-3 mb-3">
+                      <div className="mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
                         <h3 className="font-semibold text-gray-900">
                           Pedido #{order.order_number}
                         </h3>
@@ -142,14 +142,14 @@ export default function OrdersPage() {
                     </div>
 
                     {/* Total and Arrow */}
-                    <div className="flex flex-col items-end justify-between h-full">
-                      <div className="text-right">
+                    <div className="flex flex-row items-center justify-between sm:h-full sm:flex-col sm:items-end">
+                      <div className="text-left sm:text-right">
                         <p className="text-sm text-gray-600 mb-1">Total</p>
                         <p className="text-xl font-bold text-primary">
                           {formatCurrency(order.total)}
                         </p>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-gray-400 mt-4" />
+                      <ChevronRight className="h-5 w-5 text-gray-400 sm:mt-4" />
                     </div>
                   </div>
                 </CardContent>

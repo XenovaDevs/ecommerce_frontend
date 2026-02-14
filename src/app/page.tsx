@@ -144,7 +144,7 @@ export default function HomePage() {
         <div className="absolute bottom-0 left-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="glass border border-white/20 rounded-3xl px-8 py-16 text-center sm:px-16 shadow-2xl">
+          <div className="glass rounded-3xl border border-white/20 px-5 py-12 text-center shadow-2xl sm:px-10 sm:py-16 lg:px-16">
             <div className="animate-slide-up">
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
                 Suscribete a nuestro newsletter
@@ -153,13 +153,16 @@ export default function HomePage() {
                 Recibe ofertas exclusivas, lanzamientos anticipados y novedades directamente en tu email.
               </p>
             </div>
-            <form className="mx-auto mt-8 flex max-w-md gap-3 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <form
+              className="mx-auto mt-8 flex w-full max-w-md flex-col gap-3 animate-slide-up sm:flex-row"
+              style={{ animationDelay: '0.1s' }}
+            >
               <input
                 type="email"
                 placeholder="tu@email.com"
                 className="flex-1 rounded-xl border-2 border-gray-200 bg-white px-5 py-3 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all duration-200"
               />
-              <Button type="submit" size="lg" variant="gradient-sage">
+              <Button type="submit" size="lg" variant="gradient-sage" className="w-full sm:w-auto">
                 Suscribirse
               </Button>
             </form>

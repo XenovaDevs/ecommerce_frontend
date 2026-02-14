@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button, Badge, Card, CardContent } from '@/components/ui';
 import { ROUTES } from '@/constants';
@@ -95,14 +96,14 @@ export default function WishlistPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold text-gray-900">Lista de deseos</h2>
         <p className="text-sm text-gray-600">
           {wishlistItems.length} producto{wishlistItems.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 lg:grid-cols-3">
         {wishlistItems.map((item) => {
           const { product } = item;
           const hasDiscount =
@@ -121,10 +122,12 @@ export default function WishlistPage() {
                 {/* Product Image */}
                 <Link href={ROUTES.PRODUCT_DETAIL(product.slug)}>
                   <div className="relative aspect-square bg-gray-100 overflow-hidden group">
-                    <img
+                    <Image
                       src={product.images[0]?.url || '/images/placeholder-product.svg'}
                       alt={product.name}
-                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     {hasDiscount && (
                       <Badge variant="danger" className="absolute left-2 top-2">

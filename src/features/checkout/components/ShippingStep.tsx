@@ -18,6 +18,7 @@ import type { ShippingAddressForm, ShippingOption } from '../types';
 const shippingSchema = z.object({
   first_name: z.string().min(2, ValidationMessages.min(2)),
   last_name: z.string().min(2, ValidationMessages.min(2)),
+  email: z.email('Ingresa un email valido'),
   street: z.string().min(3, ValidationMessages.min(3)),
   number: z.string().min(1, ValidationMessages.required),
   apartment: z.string().optional(),
@@ -58,6 +59,7 @@ export function ShippingStep({
   } = useForm<ShippingFormData>({
     resolver: zodResolver(shippingSchema),
     defaultValues: initialAddress || {
+      email: '',
       country: 'Argentina',
     },
   });
@@ -93,6 +95,14 @@ export function ShippingStep({
                 placeholder="Pérez"
               />
             </div>
+
+            <Input
+              label="Email"
+              type="email"
+              {...register('email')}
+              error={errors.email?.message}
+              placeholder="tu@email.com"
+            />
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="sm:col-span-2">
@@ -237,3 +247,4 @@ export function ShippingStep({
     </div>
   );
 }
+

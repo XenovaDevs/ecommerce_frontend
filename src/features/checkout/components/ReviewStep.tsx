@@ -110,6 +110,7 @@ export function ReviewStep({
             <p className="font-medium text-gray-900">
               {shippingAddress.first_name} {shippingAddress.last_name}
             </p>
+            <p>{shippingAddress.email}</p>
             <p>
               {shippingAddress.street} {shippingAddress.number}
               {shippingAddress.apartment && `, ${shippingAddress.apartment}`}

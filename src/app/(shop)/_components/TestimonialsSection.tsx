@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Star, Quote } from 'lucide-react';
-import { useInView } from '@/hooks/useInView';
+import AnimatedContent from '@/components/reactbits/Animations/AnimatedContent/AnimatedContent';
+import SpotlightCard from '@/components/reactbits/Components/SpotlightCard/SpotlightCard';
 
 interface Testimonial {
   name: string;
@@ -55,7 +56,6 @@ function StarRating({ rating }: { rating: number }) {
 export function TestimonialsSection() {
   const [active, setActive] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const { ref, isInView } = useInView();
 
   const next = useCallback(() => {
     setActive((prev) => (prev + 1) % testimonials.length);
@@ -70,19 +70,16 @@ export function TestimonialsSection() {
   return (
     <section className="py-20 sm:py-24 bg-gray-50">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
-        <div
-          ref={ref}
-          className={`text-center mb-12 transition-all duration-700 ${
-            isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-sage-gold">
-            Testimonios
-          </span>
-          <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-sage-black tracking-tight font-display">
-            Lo que dicen nuestros clientes
-          </h2>
-        </div>
+        <AnimatedContent distance={40} duration={0.7} delay={0}>
+          <div className="text-center mb-12">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-sage-gold">
+              Testimonios
+            </span>
+            <h2 className="mt-3 text-3xl sm:text-4xl font-bold text-sage-black tracking-tight font-display">
+              Lo que dicen nuestros clientes
+            </h2>
+          </div>
+        </AnimatedContent>
 
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
@@ -90,26 +87,33 @@ export function TestimonialsSection() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {testimonials.map((t, i) => (
-            <div
+            <AnimatedContent
               key={t.name}
-              className={`group relative rounded-2xl bg-white p-6 border transition-all duration-500 shadow-sm hover:shadow-elegant-lg ${
-                i === active ? 'border-sage-gold/30 shadow-gold' : 'border-gray-100'
-              } ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ transitionDelay: `${i * 100}ms` }}
-              onClick={() => setActive(i)}
+              distance={50}
+              duration={0.6}
+              delay={i * 0.1}
             >
-              <Quote className="h-6 w-6 text-sage-gold/20 mb-3" />
-              <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                &ldquo;{t.text}&rdquo;
-              </p>
-              <StarRating rating={t.rating} />
-              <div className="mt-4 flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sage-gold/10 text-sage-gold text-xs font-bold">
-                  {t.initials}
+              <SpotlightCard
+                className={`!bg-white !border-gray-100 !rounded-2xl !p-6 cursor-pointer transition-shadow duration-500 ${
+                  i === active ? 'shadow-gold !border-sage-gold/30' : 'shadow-sm hover:shadow-elegant-lg'
+                }`}
+                spotlightColor="rgba(191, 155, 96, 0.12)"
+              >
+                <div onClick={() => setActive(i)}>
+                  <Quote className="h-6 w-6 text-sage-gold/20 mb-3" />
+                  <p className="text-sm text-gray-600 leading-relaxed mb-4">
+                    &ldquo;{t.text}&rdquo;
+                  </p>
+                  <StarRating rating={t.rating} />
+                  <div className="mt-4 flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-sage-gold/10 text-sage-gold text-xs font-bold">
+                      {t.initials}
+                    </div>
+                    <span className="text-sm font-medium text-sage-black">{t.name}</span>
+                  </div>
                 </div>
-                <span className="text-sm font-medium text-sage-black">{t.name}</span>
-              </div>
-            </div>
+              </SpotlightCard>
+            </AnimatedContent>
           ))}
         </div>
 

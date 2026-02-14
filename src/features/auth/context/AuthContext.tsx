@@ -48,6 +48,20 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+const getSafeRedirectFromLocation = (): string => {
+  if (typeof window === 'undefined') {
+    return ROUTES.HOME;
+  }
+
+  const redirect = new URLSearchParams(window.location.search).get('redirect');
+
+  if (!redirect || !redirect.startsWith('/')) {
+    return ROUTES.HOME;
+  }
+
+  return redirect;
+};
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, setState] = useState<AuthState>(initialState);
   const router = useRouter();
@@ -115,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const { user } = await authService.login(credentials);
       setUser(user);
-      router.push(ROUTES.HOME);
+      router.push(getSafeRedirectFromLocation());
     } catch (error) {
       const message = handleAuthError(error);
       setError(message);
@@ -128,7 +142,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       const { user } = await authService.register(data);
       setUser(user);
-      router.push(ROUTES.HOME);
+      router.push(getSafeRedirectFromLocation());
     } catch (error) {
       const message = handleAuthError(error);
       setError(message);

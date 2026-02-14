@@ -21,9 +21,13 @@ class CheckoutService {
   /**
    * Validate cart before checkout
    */
-  async validateCart(): Promise<{ valid: boolean; errors?: string[] }> {
+  async validateCart(isGuestCheckout = false): Promise<{ valid: boolean; errors?: string[] }> {
+    const endpoint = isGuestCheckout
+      ? API_ENDPOINTS.CHECKOUT.GUEST_VALIDATE
+      : API_ENDPOINTS.CHECKOUT.VALIDATE;
+
     const response = await apiClient.post<{ data: { valid: boolean; message: string } }>(
-      API_ENDPOINTS.CHECKOUT.VALIDATE
+      endpoint
     );
     return { valid: response.data.data.valid };
   }
@@ -47,9 +51,13 @@ class CheckoutService {
    * Get available payment methods
    * Backend route: GET /payments/methods
    */
-  async getPaymentMethods(): Promise<PaymentMethod[]> {
+  async getPaymentMethods(isGuestCheckout = false): Promise<PaymentMethod[]> {
+    const endpoint = isGuestCheckout
+      ? API_ENDPOINTS.CHECKOUT.GUEST_PAYMENT_METHODS
+      : '/payments/methods';
+
     const response = await apiClient.get<{ data: PaymentMethod[] }>(
-      '/payments/methods'
+      endpoint
     );
     return response.data.data;
   }
@@ -71,9 +79,13 @@ class CheckoutService {
    * Backend route: POST /checkout
    * Returns { order, payment_url }
    */
-  async processCheckout(data: CheckoutData): Promise<CheckoutResponse> {
+  async processCheckout(data: CheckoutData, isGuestCheckout = false): Promise<CheckoutResponse> {
+    const endpoint = isGuestCheckout
+      ? API_ENDPOINTS.CHECKOUT.GUEST_PROCESS
+      : API_ENDPOINTS.CHECKOUT.PROCESS;
+
     const response = await apiClient.post<{ data: CheckoutResponse }>(
-      API_ENDPOINTS.CHECKOUT.PROCESS,
+      endpoint,
       data
     );
     return response.data.data;
