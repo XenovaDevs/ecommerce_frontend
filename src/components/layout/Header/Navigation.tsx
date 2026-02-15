@@ -5,10 +5,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ROUTES } from '@/constants';
 
-/**
- * @ai-context Navigation component for header links.
- */
-
 interface NavigationProps {
   mobile?: boolean;
   onItemClick?: () => void;
@@ -40,8 +36,8 @@ export function Navigation({ mobile = false, onItemClick }: NavigationProps) {
             className={cn(
               'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
               isActive(item.href)
-                ? 'bg-primary/10 text-primary'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-sage-gold/10 text-sage-gold'
+                : 'text-sage-ivory/60 hover:bg-sage-surface-hover hover:text-sage-cream'
             )}
           >
             {item.label}
@@ -60,8 +56,8 @@ export function Navigation({ mobile = false, onItemClick }: NavigationProps) {
           className={cn(
             'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
             isActive(item.href)
-              ? 'bg-primary/10 text-primary'
-              : 'text-gray-700 hover:bg-gray-100'
+              ? 'bg-sage-gold/10 text-sage-gold'
+              : 'text-sage-ivory/60 hover:bg-sage-surface-light hover:text-sage-cream'
           )}
         >
           {item.label}

@@ -30,16 +30,16 @@ function ProductGridSkeleton({ count = 8 }: { count?: number }) {
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm animate-slide-up"
+          className="flex flex-col overflow-hidden rounded-2xl border border-sage-surface-light bg-sage-surface shadow-sm animate-slide-up"
           style={{ animationDelay: `${i * 0.05}s` }}
         >
-          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 animate-shimmer" />
+          <div className="aspect-square bg-gradient-to-br from-sage-surface-light to-sage-surface-hover animate-shimmer" />
           <div className="p-5 space-y-3">
-            <div className="h-3 w-16 rounded bg-gray-200 animate-pulse" />
-            <div className="h-4 w-full rounded bg-gray-200 animate-pulse" />
-            <div className="h-4 w-3/4 rounded bg-gray-200 animate-pulse" />
-            <div className="h-5 w-24 rounded bg-gray-200 animate-pulse" />
-            <div className="h-10 w-full rounded-lg bg-gray-200 animate-pulse" />
+            <div className="h-3 w-16 rounded bg-sage-surface-light animate-pulse" />
+            <div className="h-4 w-full rounded bg-sage-surface-light animate-pulse" />
+            <div className="h-4 w-3/4 rounded bg-sage-surface-light animate-pulse" />
+            <div className="h-5 w-24 rounded bg-sage-surface-light animate-pulse" />
+            <div className="h-10 w-full rounded-lg bg-sage-surface-light animate-pulse" />
           </div>
         </div>
       ))}
@@ -63,10 +63,11 @@ export function ProductGrid({
   if (products.length === 0) {
     return (
       <EmptyState
-        icon={<Package className="h-16 w-16" />}
+        icon={<Package className="h-16 w-16 text-sage-ivory/35" />}
         title={emptyMessage}
         description="Intenta ajustar los filtros o buscar algo diferente"
         action={emptyAction}
+        className="text-sage-cream"
       />
     );
   }

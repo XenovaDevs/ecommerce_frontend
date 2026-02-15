@@ -9,19 +9,9 @@ import { Button, Card, CardContent, Input, Textarea } from '@/components/ui';
 import { contactService } from '@/services';
 import type { CreateContactMessageData } from '@/types';
 
-/**
- * @ai-context Contact form page for customer inquiries.
- *             Public page using react-hook-form with Zod validation.
- * @ai-flow
- *   1. User fills out contact form
- *   2. Client-side validation with Zod
- *   3. Submit to backend API
- *   4. Show success/error state
- */
-
 const contactSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(255),
-  email: z.string().email('Ingrese un email válido').max(255),
+  email: z.string().email('Ingrese un email valido').max(255),
   phone: z.string().max(20).optional().or(z.literal('')),
   subject: z.string().min(3, 'El asunto debe tener al menos 3 caracteres').max(255),
   message: z
@@ -31,6 +21,11 @@ const contactSchema = z.object({
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
+
+const fieldClassName =
+  'border-sage-surface-hover bg-sage-surface-light text-sage-cream placeholder:text-sage-ivory/35 hover:border-sage-gold/40 focus:border-sage-gold/40 focus:ring-sage-gold/10';
+const fieldContainerClassName =
+  '[&_label]:text-sage-ivory/70 [&_.text-red-600]:text-red-300 [&_svg]:text-sage-ivory/35';
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -71,20 +66,20 @@ export default function ContactPage() {
   if (isSubmitted) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-20 sm:px-6 lg:px-8">
-        <Card>
+        <Card className="border border-sage-surface-light bg-sage-surface">
           <CardContent className="p-10 text-center">
             <div className="mb-6 flex justify-center">
-              <div className="rounded-full bg-green-100 p-4">
-                <CheckCircle className="h-12 w-12 text-green-600" />
+              <div className="rounded-full bg-green-500/15 p-4">
+                <CheckCircle className="h-12 w-12 text-green-300" />
               </div>
             </div>
-            <h2 className="mb-3 text-2xl font-bold text-gray-900">
-              ¡Mensaje enviado con éxito!
+            <h2 className="mb-3 font-display text-2xl font-bold text-sage-cream">
+              Mensaje enviado con exito
             </h2>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-sage-ivory/55">
               Hemos recibido tu mensaje y te responderemos lo antes posible.
             </p>
-            <Button onClick={() => setIsSubmitted(false)} variant="gradient-sage">
+            <Button onClick={() => setIsSubmitted(false)} variant="gold">
               Enviar otro mensaje
             </Button>
           </CardContent>
@@ -94,115 +89,129 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mb-10 animate-slide-up text-center">
-        <h1 className="text-3xl font-bold text-gray-900 sm:text-5xl">Contáctanos</h1>
-        <p className="mt-4 text-base text-gray-600 sm:text-lg">
-          ¿Tienes alguna pregunta o sugerencia? Completa el formulario y nos pondremos en contacto
-          contigo.
-        </p>
+    <div className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-sage-gold/[0.04] blur-[120px]" />
       </div>
 
-      <Card className="animate-slide-up [animation-delay:100ms]">
-        <CardContent className="p-5 sm:p-8">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Input
-                label="Nombre completo"
-                placeholder="Tu nombre"
-                leftIcon={<User className="h-4 w-4" />}
-                error={errors.name?.message}
-                {...register('name')}
+      <div className="relative mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-10 animate-slide-up text-center">
+          <h1 className="font-display text-3xl font-bold text-sage-cream sm:text-5xl">Contactanos</h1>
+          <p className="mt-4 text-base text-sage-ivory/55 sm:text-lg">
+            Tienes alguna pregunta o sugerencia? Completa el formulario y nos pondremos en contacto contigo.
+          </p>
+        </div>
+
+        <Card className="animate-slide-up border border-sage-surface-light bg-sage-surface [animation-delay:100ms]">
+          <CardContent className="p-5 sm:p-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Input
+                  label="Nombre completo"
+                  placeholder="Tu nombre"
+                  leftIcon={<User className="h-4 w-4" />}
+                  error={errors.name?.message}
+                  className={fieldClassName}
+                  containerClassName={fieldContainerClassName}
+                  {...register('name')}
+                />
+
+                <Input
+                  label="Email"
+                  type="email"
+                  placeholder="tu@email.com"
+                  leftIcon={<Mail className="h-4 w-4" />}
+                  error={errors.email?.message}
+                  className={fieldClassName}
+                  containerClassName={fieldContainerClassName}
+                  {...register('email')}
+                />
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2">
+                <Input
+                  label="Telefono (opcional)"
+                  type="tel"
+                  placeholder="+54 11 1234-5678"
+                  leftIcon={<Phone className="h-4 w-4" />}
+                  error={errors.phone?.message}
+                  className={fieldClassName}
+                  containerClassName={fieldContainerClassName}
+                  {...register('phone')}
+                />
+
+                <Input
+                  label="Asunto"
+                  placeholder="Motivo de tu consulta"
+                  leftIcon={<MessageSquare className="h-4 w-4" />}
+                  error={errors.subject?.message}
+                  className={fieldClassName}
+                  containerClassName={fieldContainerClassName}
+                  {...register('subject')}
+                />
+              </div>
+
+              <Textarea
+                label="Mensaje"
+                placeholder="Escribe tu mensaje aqui..."
+                rows={6}
+                error={errors.message?.message}
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
+                {...register('message')}
               />
 
-              <Input
-                label="Email"
-                type="email"
-                placeholder="tu@email.com"
-                leftIcon={<Mail className="h-4 w-4" />}
-                error={errors.email?.message}
-                {...register('email')}
-              />
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2">
-              <Input
-                label="Teléfono (opcional)"
-                type="tel"
-                placeholder="+54 11 1234-5678"
-                leftIcon={<Phone className="h-4 w-4" />}
-                error={errors.phone?.message}
-                {...register('phone')}
-              />
-
-              <Input
-                label="Asunto"
-                placeholder="Motivo de tu consulta"
-                leftIcon={<MessageSquare className="h-4 w-4" />}
-                error={errors.subject?.message}
-                {...register('subject')}
-              />
-            </div>
-
-            <Textarea
-              label="Mensaje"
-              placeholder="Escribe tu mensaje aquí..."
-              rows={6}
-              error={errors.message?.message}
-              {...register('message')}
-            />
-
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                size="lg"
-                variant="gradient-sage"
-                disabled={isSubmitting}
-                className="w-full sm:min-w-[180px] sm:w-auto"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Enviando...
-                  </>
-                ) : (
-                  <>
-                    Enviar mensaje
-                    <Send className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      <div className="mt-10 grid gap-6 sm:grid-cols-3">
-        <Card className="animate-slide-up [animation-delay:200ms]">
-          <CardContent className="p-6 text-center">
-            <Mail className="mx-auto mb-3 h-8 w-8 text-primary" />
-            <h3 className="mb-1 font-semibold text-gray-900">Email</h3>
-            <p className="text-sm text-gray-600">contacto@lepas.com</p>
+              <div className="flex justify-end">
+                <Button
+                  type="submit"
+                  size="lg"
+                  variant="gold"
+                  disabled={isSubmitting}
+                  className="w-full sm:min-w-[180px] sm:w-auto"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-sage-cream border-t-transparent" />
+                      Enviando...
+                    </>
+                  ) : (
+                    <>
+                      Enviar mensaje
+                      <Send className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
           </CardContent>
         </Card>
 
-        <Card className="animate-slide-up [animation-delay:300ms]">
-          <CardContent className="p-6 text-center">
-            <Phone className="mx-auto mb-3 h-8 w-8 text-primary" />
-            <h3 className="mb-1 font-semibold text-gray-900">Teléfono</h3>
-            <p className="text-sm text-gray-600">+54 11 1234-5678</p>
-          </CardContent>
-        </Card>
+        <div className="mt-10 grid gap-6 sm:grid-cols-3">
+          <Card className="animate-slide-up border border-sage-surface-light bg-sage-surface [animation-delay:200ms]">
+            <CardContent className="p-6 text-center">
+              <Mail className="mx-auto mb-3 h-8 w-8 text-sage-gold" />
+              <h3 className="mb-1 font-semibold text-sage-cream">Email</h3>
+              <p className="text-sm text-sage-ivory/55">contacto@lepas.com</p>
+            </CardContent>
+          </Card>
 
-        <Card className="animate-slide-up [animation-delay:400ms]">
-          <CardContent className="p-6 text-center">
-            <MessageSquare className="mx-auto mb-3 h-8 w-8 text-primary" />
-            <h3 className="mb-1 font-semibold text-gray-900">Horario</h3>
-            <p className="text-sm text-gray-600">Lun - Vie: 9:00 - 18:00</p>
-          </CardContent>
-        </Card>
+          <Card className="animate-slide-up border border-sage-surface-light bg-sage-surface [animation-delay:300ms]">
+            <CardContent className="p-6 text-center">
+              <Phone className="mx-auto mb-3 h-8 w-8 text-sage-gold" />
+              <h3 className="mb-1 font-semibold text-sage-cream">Telefono</h3>
+              <p className="text-sm text-sage-ivory/55">+54 11 1234-5678</p>
+            </CardContent>
+          </Card>
+
+          <Card className="animate-slide-up border border-sage-surface-light bg-sage-surface [animation-delay:400ms]">
+            <CardContent className="p-6 text-center">
+              <MessageSquare className="mx-auto mb-3 h-8 w-8 text-sage-gold" />
+              <h3 className="mb-1 font-semibold text-sage-cream">Horario</h3>
+              <p className="text-sm text-sage-ivory/55">Lun - Vie: 9:00 - 18:00</p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
 }
-

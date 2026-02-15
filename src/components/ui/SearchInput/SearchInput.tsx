@@ -22,7 +22,7 @@
  */
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -47,17 +47,15 @@ export const SearchInput = ({
   showShortcut = false,
   className,
 }: SearchInputProps) => {
-  const [value, setValue] = useState(controlledValue || '');
+  const [uncontrolledValue, setUncontrolledValue] = useState(controlledValue || '');
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
-
-  // Sync with controlled value
-  useEffect(() => {
-    if (controlledValue !== undefined) {
-      setValue(controlledValue);
-    }
-  }, [controlledValue]);
+  const isControlled = controlledValue !== undefined;
+  const value = useMemo(
+    () => (isControlled ? (controlledValue ?? '') : uncontrolledValue),
+    [controlledValue, isControlled, uncontrolledValue]
+  );
 
   // Keyboard shortcut (Cmd+K or Ctrl+K)
   useEffect(() => {
@@ -74,7 +72,9 @@ export const SearchInput = ({
 
   // Handle input change with debounce
   const handleChange = (newValue: string) => {
-    setValue(newValue);
+    if (!isControlled) {
+      setUncontrolledValue(newValue);
+    }
 
     // Clear existing timer
     if (debounceTimerRef.current) {
@@ -89,7 +89,9 @@ export const SearchInput = ({
 
   // Handle clear
   const handleClear = () => {
-    setValue('');
+    if (!isControlled) {
+      setUncontrolledValue('');
+    }
     onChange?.('');
     inputRef.current?.focus();
   };

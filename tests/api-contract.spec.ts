@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+﻿import { test, expect } from '@playwright/test';
 import {
   API_BASE_URL,
   API_ENDPOINTS,
@@ -11,12 +11,16 @@ import {
   unwrapData,
 } from './utils/api';
 
-test.describe('API contract - público', () => {
+type ApiCart = {
+  items?: Array<{ id?: string | number }>;
+};
+
+test.describe('API contract - pÃºblico', () => {
   test('lista de productos', async () => {
     const api = await newApiContext();
     const res = await api.get(apiPath(API_ENDPOINTS.PRODUCTS.LIST));
     expect(res.ok()).toBeTruthy();
-    const list = unwrapData<any[]>(await res.json());
+    const list = unwrapData<unknown[]>(await res.json());
     expect(Array.isArray(list)).toBeTruthy();
   });
 
@@ -28,7 +32,7 @@ test.describe('API contract - público', () => {
     expect(res.ok()).toBeTruthy();
   });
 
-  test('categorías y árbol', async () => {
+  test('categorÃ­as y Ã¡rbol', async () => {
     const api = await newApiContext();
     const categories = await api.get(apiPath(API_ENDPOINTS.CATEGORIES.LIST));
     expect(categories.ok()).toBeTruthy();
@@ -36,7 +40,7 @@ test.describe('API contract - público', () => {
     expect(tree.ok()).toBeTruthy();
   });
 
-  test('productos por categoría', async () => {
+  test('productos por categorÃ­a', async () => {
     const api = await newApiContext();
     const category = await getFirstCategory(api);
     expect(category).toBeTruthy();
@@ -44,7 +48,7 @@ test.describe('API contract - público', () => {
     expect(res.ok()).toBeTruthy();
   });
 
-  test('productos destacados y búsqueda', async () => {
+  test('productos destacados y bÃºsqueda', async () => {
     const api = await newApiContext();
     const featured = await api.get(apiPath(API_ENDPOINTS.PRODUCTS.FEATURED));
     expect(featured.status()).toBeLessThan(500);
@@ -78,7 +82,7 @@ test.describe('API contract - autenticado', () => {
     const cart = await api.get(apiPath(API_ENDPOINTS.CART.GET));
     expect(cart.ok()).toBeTruthy();
 
-    const cartBody = unwrapData<any>(await cart.json());
+    const cartBody = unwrapData<ApiCart>(await cart.json());
     const itemId = cartBody?.items?.[0]?.id;
     if (itemId) {
       const update = await api.patch(apiPath(API_ENDPOINTS.CART.UPDATE_ITEM(String(itemId))), { data: { quantity: 2 } });
@@ -113,3 +117,4 @@ test.describe('API contract - autenticado', () => {
 test('base URL configurada', () => {
   expect(API_BASE_URL).toBeTruthy();
 });
+

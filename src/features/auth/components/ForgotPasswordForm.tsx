@@ -27,6 +27,7 @@ const forgotPasswordSchema = z.object({
 });
 
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+type ApiErrorShape = { response?: { data?: { message?: string } } };
 
 export function ForgotPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -51,9 +52,10 @@ export function ForgotPasswordForm() {
       await authService.forgotPassword(data);
       setSentEmail(data.email);
       setIsSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const apiMessage = (err as ApiErrorShape).response?.data?.message;
       setError(
-        err?.response?.data?.message ||
+        apiMessage ||
         'No pudimos enviar el email. Intenta de nuevo.'
       );
     } finally {

@@ -7,15 +7,6 @@ import { Button, Badge } from '@/components/ui';
 import { formatCurrency } from '@/lib/utils';
 import type { Category, ProductFilters as Filters, ProductSortField } from '../types';
 
-/**
- * @ai-context Product filters sidebar/modal with category, price, and sorting.
- * @ai-props
- *   - categories: Available categories
- *   - filters: Current filter state
- *   - onFiltersChange: Callback when filters change
- *   - onReset: Callback to reset all filters
- */
-
 interface ProductFiltersProps {
   categories: Category[];
   filters: Filters;
@@ -51,15 +42,15 @@ function FilterSection({ title, children, defaultOpen = true }: FilterSectionPro
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-gray-200 py-4">
+    <div className="border-b border-sage-surface-hover py-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between text-left"
       >
-        <span className="text-sm font-medium text-gray-900">{title}</span>
+        <span className="text-sm font-medium text-sage-cream">{title}</span>
         <ChevronDown
           className={cn(
-            'h-4 w-4 text-gray-500 transition-transform',
+            'h-4 w-4 text-sage-ivory/40 transition-transform',
             isOpen && 'rotate-180'
           )}
         />
@@ -87,10 +78,10 @@ export function ProductFilters({
   return (
     <div className="w-full">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+      <div className="flex items-center justify-between border-b border-sage-surface-hover pb-4">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="h-5 w-5 text-gray-600" />
-          <span className="font-medium text-gray-900">Filtros</span>
+          <SlidersHorizontal className="h-5 w-5 text-sage-ivory/50" />
+          <span className="font-medium text-sage-cream">Filtros</span>
           {activeFiltersCount > 0 && (
             <Badge variant="info" className="text-xs">
               {activeFiltersCount}
@@ -100,19 +91,19 @@ export function ProductFilters({
         {activeFiltersCount > 0 && (
           <button
             onClick={onReset}
-            className="text-sm text-primary hover:underline"
+            className="text-sm text-sage-gold hover:underline"
           >
             Limpiar todo
           </button>
         )}
       </div>
 
-      {/* Sort (mobile-friendly select) */}
+      {/* Sort */}
       <FilterSection title="Ordenar por">
         <select
           value={filters.sort || 'newest'}
           onChange={(e) => onFiltersChange({ sort: e.target.value as ProductSortField })}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+          className="w-full rounded-lg border border-sage-surface-hover bg-sage-surface-light px-3 py-2 text-sm text-sage-cream focus:border-sage-gold/40 focus:outline-none focus:ring-2 focus:ring-sage-gold/10"
           disabled={isLoading}
         >
           {SORT_OPTIONS.map((option) => (
@@ -131,8 +122,8 @@ export function ProductFilters({
             className={cn(
               'block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
               !filters.category_id
-                ? 'bg-primary/10 font-medium text-primary'
-                : 'text-gray-600 hover:bg-gray-100'
+                ? 'bg-sage-gold/10 font-medium text-sage-gold'
+                : 'text-sage-ivory/60 hover:bg-sage-surface-hover'
             )}
           >
             Todas las categorías
@@ -144,13 +135,13 @@ export function ProductFilters({
               className={cn(
                 'block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
                 filters.category_id === category.id
-                  ? 'bg-primary/10 font-medium text-primary'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? 'bg-sage-gold/10 font-medium text-sage-gold'
+                  : 'text-sage-ivory/60 hover:bg-sage-surface-hover'
               )}
             >
               {category.name}
               {category.products_count !== undefined && (
-                <span className="ml-2 text-gray-400">({category.products_count})</span>
+                <span className="ml-2 text-sage-ivory/30">({category.products_count})</span>
               )}
             </button>
           ))}
@@ -175,8 +166,8 @@ export function ProductFilters({
                 className={cn(
                   'block w-full rounded-lg px-3 py-2 text-left text-sm transition-colors',
                   isSelected
-                    ? 'bg-primary/10 font-medium text-primary'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-sage-gold/10 font-medium text-sage-gold'
+                    : 'text-sage-ivory/60 hover:bg-sage-surface-hover'
                 )}
               >
                 {range.label}
@@ -194,9 +185,9 @@ export function ProductFilters({
             onChange={(e) =>
               onFiltersChange({ min_price: e.target.value ? Number(e.target.value) : undefined })
             }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-sage-surface-hover bg-sage-surface-light px-3 py-2 text-sm text-sage-cream placeholder:text-sage-ivory/25 focus:border-sage-gold/40 focus:outline-none focus:ring-2 focus:ring-sage-gold/10"
           />
-          <span className="text-gray-400">-</span>
+          <span className="text-sage-ivory/30">-</span>
           <input
             type="number"
             placeholder="Max"
@@ -204,7 +195,7 @@ export function ProductFilters({
             onChange={(e) =>
               onFiltersChange({ max_price: e.target.value ? Number(e.target.value) : undefined })
             }
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="w-full rounded-lg border border-sage-surface-hover bg-sage-surface-light px-3 py-2 text-sm text-sage-cream placeholder:text-sage-ivory/25 focus:border-sage-gold/40 focus:outline-none focus:ring-2 focus:ring-sage-gold/10"
           />
         </div>
       </FilterSection>
@@ -217,18 +208,18 @@ export function ProductFilters({
               type="checkbox"
               checked={filters.in_stock || false}
               onChange={(e) => onFiltersChange({ in_stock: e.target.checked || undefined })}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              className="h-4 w-4 rounded border-sage-surface-hover bg-sage-surface-light text-sage-gold focus:ring-sage-gold/30 accent-sage-gold"
             />
-            <span className="text-sm text-gray-700">Solo con stock</span>
+            <span className="text-sm text-sage-ivory/60">Solo con stock</span>
           </label>
           <label className="flex cursor-pointer items-center gap-3">
             <input
               type="checkbox"
               checked={filters.on_sale || false}
               onChange={(e) => onFiltersChange({ on_sale: e.target.checked || undefined })}
-              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+              className="h-4 w-4 rounded border-sage-surface-hover bg-sage-surface-light text-sage-gold focus:ring-sage-gold/30 accent-sage-gold"
             />
-            <span className="text-sm text-gray-700">En oferta</span>
+            <span className="text-sm text-sage-ivory/60">En oferta</span>
           </label>
         </div>
       </FilterSection>
@@ -244,7 +235,7 @@ interface MobileFilterButtonProps {
 
 export function MobileFilterButton({ onClick, activeCount }: MobileFilterButtonProps) {
   return (
-    <Button variant="outline" onClick={onClick} className="lg:hidden">
+    <Button variant="outline" onClick={onClick} className="lg:hidden border-sage-surface-hover text-sage-cream">
       <SlidersHorizontal className="mr-2 h-4 w-4" />
       Filtros
       {activeCount > 0 && (
@@ -296,26 +287,25 @@ export function ActiveFilters({ filters, categories, onRemove, onReset }: Active
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <span className="text-sm text-gray-500">Filtros activos:</span>
+      <span className="text-sm text-sage-ivory/40">Filtros activos:</span>
       {tags.map((tag) => (
-        <Badge
+        <span
           key={tag.key}
-          variant="info"
-          className="flex items-center gap-1 pl-3 pr-2"
+          className="flex items-center gap-1 rounded-full border border-sage-gold/20 bg-sage-surface px-3 py-1 text-xs text-sage-cream"
         >
           {tag.label}
           <button
             onClick={() => onRemove(tag.key)}
-            className="ml-1 rounded-full p-0.5 hover:bg-gray-300"
+            className="ml-1 rounded-full p-0.5 hover:bg-sage-surface-hover transition-colors"
             aria-label={`Quitar filtro: ${tag.label}`}
           >
             <X className="h-3 w-3" />
           </button>
-        </Badge>
+        </span>
       ))}
       <button
         onClick={onReset}
-        className="text-sm text-primary hover:underline"
+        className="text-sm text-sage-gold hover:underline"
       >
         Limpiar todos
       </button>

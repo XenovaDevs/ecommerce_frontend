@@ -1,12 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { productsService } from '../services';
 import type { Product } from '../types';
-
-/**
- * @ai-context Hook for fetching a single product by slug.
- */
 
 interface UseProductState {
   product: Product | null;
@@ -21,22 +17,17 @@ interface UseProductReturn extends UseProductState {
 export function useProduct(slug: string): UseProductReturn {
   const [state, setState] = useState<UseProductState>({
     product: null,
-    isLoading: true,
-    error: null,
+    isLoading: Boolean(slug),
+    error: slug ? null : 'Missing product slug',
   });
 
-  const fetchProduct = useCallback(async () => {
+  const refresh = useCallback(async () => {
     if (!slug) return;
 
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
     try {
       const product = await productsService.getProduct(slug);
-      setState({
-        product,
-        isLoading: false,
-        error: null,
-      });
+      setState({ product, isLoading: false, error: null });
     } catch (error) {
       setState({
         product: null,
@@ -46,11 +37,31 @@ export function useProduct(slug: string): UseProductReturn {
     }
   }, [slug]);
 
-  const refresh = useCallback(() => fetchProduct(), [fetchProduct]);
-
   useEffect(() => {
-    fetchProduct();
-  }, [fetchProduct]);
+    if (!slug) return;
+
+    let isMounted = true;
+
+    const bootstrap = async () => {
+      try {
+        const product = await productsService.getProduct(slug);
+        if (!isMounted) return;
+        setState({ product, isLoading: false, error: null });
+      } catch (error) {
+        if (!isMounted) return;
+        setState({
+          product: null,
+          isLoading: false,
+          error: error instanceof Error ? error.message : 'Error loading product',
+        });
+      }
+    };
+
+    void bootstrap();
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]);
 
   return {
     ...state,

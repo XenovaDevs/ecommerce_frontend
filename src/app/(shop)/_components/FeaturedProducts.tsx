@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { AlertCircle, RefreshCw, ShoppingBag } from 'lucide-react';
@@ -18,33 +18,43 @@ export function FeaturedProducts() {
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const { addItem } = useCart();
 
+  const loadProducts = async () => {
+    try {
+      const featured = await productsService.getFeaturedProducts(4);
+      setProducts(featured);
+      setError(null);
+    } catch {
+      setError('No pudimos cargar los productos destacados.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchProducts = () => {
     setIsLoading(true);
     setError(null);
-    productsService
-      .getFeaturedProducts(8)
-      .then(setProducts)
-      .catch(() => setError('No pudimos cargar los productos destacados.'))
-      .finally(() => setIsLoading(false));
+    void loadProducts();
   };
 
   useEffect(() => {
-    fetchProducts();
+    void loadProducts();
   }, []);
 
   const handleAddToCart = async (product: Product) => {
     try {
       await addItem({ product_id: product.id, quantity: 1 });
-    } catch {}
+    } catch {
+      // Error handled by cart context notifications.
+    }
   };
 
   if (error) {
     return (
       <div className="mt-12 flex flex-col items-center justify-center py-16 text-center">
-        <AlertCircle className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">{error}</p>
+        <AlertCircle className="mb-4 h-10 w-10 text-sage-ivory/30" />
+        <p className="mb-4 text-sage-ivory/50">{error}</p>
         <Button variant="outline" size="md" onClick={fetchProducts} className="group">
-          <RefreshCw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+          <RefreshCw className="mr-2 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
           Reintentar
         </Button>
       </div>
@@ -54,10 +64,10 @@ export function FeaturedProducts() {
   if (!isLoading && products.length === 0) {
     return (
       <div className="mt-12 flex flex-col items-center justify-center py-16 text-center">
-        <ShoppingBag className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">Aún no hay productos destacados.</p>
+        <ShoppingBag className="mb-4 h-10 w-10 text-sage-ivory/30" />
+        <p className="mb-4 text-sage-ivory/50">Aun no hay productos destacados.</p>
         <Link href={ROUTES.PRODUCTS}>
-          <Button variant="outline" size="md">Ver catálogo completo</Button>
+          <Button variant="outline" size="md">Ver catalogo completo</Button>
         </Link>
       </div>
     );
@@ -66,25 +76,25 @@ export function FeaturedProducts() {
   return (
     <div className="mt-12">
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
+        <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="animate-slide-up" style={{ animationDelay: `${i * 0.08}s` }}>
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 animate-shimmer" />
+              <div className="aspect-square animate-shimmer rounded-2xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover" />
               <div className="mt-4 space-y-2.5">
-                <div className="h-4 rounded bg-gray-200 animate-pulse w-3/4" />
-                <div className="h-3 rounded bg-gray-200 animate-pulse w-1/2" />
+                <div className="h-4 w-3/4 animate-pulse rounded bg-sage-surface-light" />
+                <div className="h-3 w-1/2 animate-pulse rounded bg-sage-surface-light" />
               </div>
             </div>
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4">
           {products.map((product, i) => (
             <AnimatedContent
               key={product.id}
               distance={40}
-              duration={0.5}
-              delay={i * 0.08}
+              duration={0.6}
+              delay={i * 0.12}
               ease="power3.out"
             >
               <ProductCard

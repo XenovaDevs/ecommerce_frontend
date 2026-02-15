@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { AlertCircle, RefreshCw, Layers } from 'lucide-react';
@@ -15,27 +15,35 @@ export function CategoriesSection() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const loadCategories = async () => {
+    try {
+      const cats = await productsService.getCategories();
+      setCategories(cats.slice(0, 3));
+      setError(null);
+    } catch {
+      setError('No pudimos cargar las categorias.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchCategories = () => {
     setIsLoading(true);
     setError(null);
-    productsService
-      .getCategories()
-      .then((cats) => setCategories(cats.slice(0, 6)))
-      .catch(() => setError('No pudimos cargar las categorías.'))
-      .finally(() => setIsLoading(false));
+    void loadCategories();
   };
 
   useEffect(() => {
-    fetchCategories();
+    void loadCategories();
   }, []);
 
   if (error) {
     return (
       <div className="mt-12 flex flex-col items-center justify-center py-16 text-center">
-        <AlertCircle className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">{error}</p>
+        <AlertCircle className="mb-4 h-10 w-10 text-sage-ivory/30" />
+        <p className="mb-4 text-sage-ivory/50">{error}</p>
         <Button variant="outline" size="md" onClick={fetchCategories} className="group">
-          <RefreshCw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+          <RefreshCw className="mr-2 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
           Reintentar
         </Button>
       </div>
@@ -45,8 +53,8 @@ export function CategoriesSection() {
   if (!isLoading && categories.length === 0) {
     return (
       <div className="mt-12 flex flex-col items-center justify-center py-16 text-center">
-        <Layers className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">Aún no hay categorías disponibles.</p>
+        <Layers className="mb-4 h-10 w-10 text-sage-ivory/30" />
+        <p className="mb-4 text-sage-ivory/50">Aun no hay categorias disponibles.</p>
         <Link href={ROUTES.PRODUCTS}>
           <Button variant="outline" size="md">Ver todos los productos</Button>
         </Link>
@@ -55,28 +63,28 @@ export function CategoriesSection() {
   }
 
   return (
-    <div className="mt-12">
+    <div className="mt-14">
       {isLoading ? (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="aspect-[4/3] animate-pulse rounded-2xl bg-gray-200" />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="aspect-[3/4] animate-pulse rounded-2xl bg-sage-surface-light" />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-fr">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           {categories.map((category, i) => (
             <AnimatedContent
               key={category.id}
-              distance={40}
-              duration={0.5}
-              delay={i * 0.08}
+              distance={50}
+              duration={0.7}
+              delay={i * 0.15}
               ease="power3.out"
             >
               <CategoryCard
                 category={category}
                 index={i}
                 isInView={true}
-                featured={i < 2}
+                featured={true}
               />
             </AnimatedContent>
           ))}

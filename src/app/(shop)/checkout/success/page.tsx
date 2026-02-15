@@ -10,12 +10,6 @@ import { checkoutService } from '@/features/checkout/services';
 import type { Order } from '@/features/checkout/types';
 import { formatCurrency } from '@/lib/utils';
 
-/**
- * @ai-context Order success page shown after successful checkout.
- *             Displays order confirmation and details.
- *             Field names aligned with backend OrderResource.
- */
-
 export const dynamic = 'force-dynamic';
 
 function CheckoutSuccessContent() {
@@ -29,7 +23,7 @@ function CheckoutSuccessContent() {
   useEffect(() => {
     const fetchOrder = async () => {
       if (!orderNumber) {
-        setError('No se encontró el número de pedido');
+        setError('No se encontro el numero de pedido');
         setIsLoading(false);
         return;
       }
@@ -52,8 +46,8 @@ function CheckoutSuccessContent() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-12 w-64 bg-gray-200 rounded" />
-          <div className="h-64 bg-gray-200 rounded" />
+          <div className="h-12 w-64 rounded bg-sage-surface-light" />
+          <div className="h-64 rounded bg-sage-surface-light" />
         </div>
       </div>
     );
@@ -62,165 +56,143 @@ function CheckoutSuccessContent() {
   if (error || !order) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">
-          Error al cargar el pedido
-        </h1>
-        <p className="text-gray-600 mb-8">{error}</p>
+        <h1 className="mb-4 text-2xl font-bold text-sage-cream">Error al cargar el pedido</h1>
+        <p className="mb-8 text-sage-ivory/55">{error}</p>
         <Link href={ROUTES.HOME}>
-          <Button>Volver al inicio</Button>
+          <Button variant="gold">Volver al inicio</Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      {/* Success Icon */}
-      <div className="mb-8 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <CheckCircle className="h-10 w-10 text-green-600" />
-        </div>
+    <div className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute right-0 top-10 h-[400px] w-[400px] rounded-full bg-sage-gold/[0.04] blur-[100px]" />
       </div>
 
-      {/* Success Message */}
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          ¡Pedido confirmado!
-        </h1>
-        <p className="text-lg text-gray-600 mb-4">
-          Gracias por tu compra. Hemos recibido tu pedido.
-        </p>
-        <div className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2">
-          <span className="text-sm text-gray-600">Número de pedido:</span>
-          <span className="text-sm font-semibold text-gray-900">
-            {order.order_number}
-          </span>
-        </div>
-      </div>
-
-      {/* Order Details */}
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Detalles del pedido
-          </h2>
-
-          {/* Order Items - using backend field names: name, total */}
-          <div className="mb-6 space-y-3">
-            {order.items.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between gap-4"
-              >
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900">
-                    {item.name}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Cantidad: {item.quantity}
-                  </p>
-                </div>
-                <p className="font-medium text-gray-900">
-                  {formatCurrency(item.total)}
-                </p>
-              </div>
-            ))}
+      <div className="relative mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="mb-8 flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/15">
+            <CheckCircle className="h-10 w-10 text-green-300" />
           </div>
+        </div>
 
-          {/* Order Summary - using flat fields from OrderResource */}
-          <div className="border-t pt-4 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Subtotal</span>
-              <span className="font-medium">{formatCurrency(order.subtotal)}</span>
+        <div className="mb-8 text-center">
+          <h1 className="mb-2 font-display text-3xl font-bold text-sage-cream">Pedido confirmado</h1>
+          <p className="mb-4 text-lg text-sage-ivory/55">
+            Gracias por tu compra. Hemos recibido tu pedido.
+          </p>
+          <div className="inline-flex items-center gap-2 rounded-lg border border-sage-surface-hover bg-sage-surface px-4 py-2">
+            <span className="text-sm text-sage-ivory/55">Numero de pedido:</span>
+            <span className="text-sm font-semibold text-sage-cream">{order.order_number}</span>
+          </div>
+        </div>
+
+        <Card className="mb-6 border border-sage-surface-light bg-sage-surface">
+          <CardContent className="p-6">
+            <h2 className="mb-4 text-lg font-semibold text-sage-cream">Detalles del pedido</h2>
+
+            <div className="mb-6 space-y-3">
+              {order.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-sage-cream">{item.name}</p>
+                    <p className="text-sm text-sage-ivory/45">Cantidad: {item.quantity}</p>
+                  </div>
+                  <p className="font-medium text-sage-cream">{formatCurrency(item.total)}</p>
+                </div>
+              ))}
             </div>
-            {order.discount > 0 && (
-              <div className="flex justify-between text-green-600">
-                <span>Descuento</span>
-                <span>-{formatCurrency(order.discount)}</span>
+
+            <div className="space-y-2 border-t border-sage-surface-hover pt-4 text-sm">
+              <div className="flex justify-between">
+                <span className="text-sage-ivory/55">Subtotal</span>
+                <span className="font-medium text-sage-cream">{formatCurrency(order.subtotal)}</span>
               </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-gray-600">Envío</span>
-              <span className="font-medium">
-                {order.shipping_cost === 0
-                  ? 'Gratis'
-                  : formatCurrency(order.shipping_cost)}
-              </span>
-            </div>
-            <div className="border-t pt-2">
-              <div className="flex justify-between text-base">
-                <span className="font-semibold">Total</span>
-                <span className="font-bold text-primary">
-                  {formatCurrency(order.total)}
+              {order.discount > 0 && (
+                <div className="flex justify-between text-green-300">
+                  <span>Descuento</span>
+                  <span>-{formatCurrency(order.discount)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-sage-ivory/55">Envio</span>
+                <span className="font-medium text-sage-cream">
+                  {order.shipping_cost === 0
+                    ? 'Gratis'
+                    : formatCurrency(order.shipping_cost)}
                 </span>
               </div>
+              <div className="border-t border-sage-surface-hover pt-2">
+                <div className="flex justify-between text-base">
+                  <span className="font-semibold text-sage-cream">Total</span>
+                  <span className="font-bold text-sage-gold">{formatCurrency(order.total)}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Shipping Address - using backend field names: name, address */}
-      {order.shipping_address && (
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Dirección de envío
-            </h2>
-            <address className="not-italic text-sm text-gray-600">
-              <p className="font-medium text-gray-900 mb-1">
-                {order.shipping_address.name}
-              </p>
-              <p>{order.shipping_address.address}</p>
-              {order.shipping_address.address_line_2 && (
-                <p>{order.shipping_address.address_line_2}</p>
-              )}
-              <p>
-                {order.shipping_address.city}
-                {order.shipping_address.state && `, ${order.shipping_address.state}`}
-              </p>
-              <p>CP: {order.shipping_address.postal_code}</p>
-              <p>País: {order.shipping_address.country}</p>
-              {order.shipping_address.phone && (
-                <p className="mt-2">{order.shipping_address.phone}</p>
-              )}
-            </address>
           </CardContent>
         </Card>
-      )}
 
-      {/* Next Steps */}
-      <Card className="mb-8">
-        <CardContent className="p-6">
-          <div className="flex items-start gap-3">
-            <Package className="h-6 w-6 text-primary mt-0.5" />
-            <div>
-              <h3 className="font-semibold text-gray-900 mb-1">
-                ¿Qué sigue?
-              </h3>
-              <p className="text-sm text-gray-600">
-                Te enviaremos un correo electrónico con la confirmación de tu
-                pedido y el número de seguimiento cuando tu pedido sea enviado.
-                Puedes ver el estado de tu pedido en cualquier momento desde tu
-                cuenta.
-              </p>
+        {order.shipping_address && (
+          <Card className="mb-6 border border-sage-surface-light bg-sage-surface">
+            <CardContent className="p-6">
+              <h2 className="mb-4 text-lg font-semibold text-sage-cream">Direccion de envio</h2>
+              <address className="not-italic text-sm text-sage-ivory/55">
+                <p className="mb-1 font-medium text-sage-cream">{order.shipping_address.name}</p>
+                <p>{order.shipping_address.address}</p>
+                {order.shipping_address.address_line_2 && (
+                  <p>{order.shipping_address.address_line_2}</p>
+                )}
+                <p>
+                  {order.shipping_address.city}
+                  {order.shipping_address.state && `, ${order.shipping_address.state}`}
+                </p>
+                <p>CP: {order.shipping_address.postal_code}</p>
+                <p>Pais: {order.shipping_address.country}</p>
+                {order.shipping_address.phone && (
+                  <p className="mt-2">{order.shipping_address.phone}</p>
+                )}
+              </address>
+            </CardContent>
+          </Card>
+        )}
+
+        <Card className="mb-8 border border-sage-surface-light bg-sage-surface">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-3">
+              <Package className="mt-0.5 h-6 w-6 text-sage-gold" />
+              <div>
+                <h3 className="mb-1 font-semibold text-sage-cream">Que sigue?</h3>
+                <p className="text-sm text-sage-ivory/55">
+                  Te enviaremos un correo electronico con la confirmacion de tu pedido y el numero
+                  de seguimiento cuando tu pedido sea enviado. Puedes ver el estado de tu pedido en
+                  cualquier momento desde tu cuenta.
+                </p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <Link href={ROUTES.ORDERS} className="flex-1">
-          <Button variant="outline" className="w-full">
-            Ver mis pedidos
-          </Button>
-        </Link>
-        <Link href={ROUTES.PRODUCTS} className="flex-1">
-          <Button className="w-full">
-            Seguir comprando
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Link href={ROUTES.ORDERS} className="flex-1">
+            <Button
+              variant="outline"
+              className="w-full border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold"
+            >
+              Ver mis pedidos
+            </Button>
+          </Link>
+          <Link href={ROUTES.PRODUCTS} className="flex-1">
+            <Button className="w-full" variant="gold">
+              Seguir comprando
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -231,8 +203,8 @@ export default function CheckoutSuccessPage() {
     <Suspense fallback={
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-12 w-64 bg-gray-200 rounded mx-auto" />
-          <div className="h-64 bg-gray-200 rounded" />
+          <div className="mx-auto h-12 w-64 rounded bg-sage-surface-light" />
+          <div className="h-64 rounded bg-sage-surface-light" />
         </div>
       </div>
     }>

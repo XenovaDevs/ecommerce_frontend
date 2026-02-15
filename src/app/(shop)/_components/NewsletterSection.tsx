@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod/v4';
 import { Send, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import BlurText from '@/components/reactbits/TextAnimations/BlurText/BlurText';
 import FadeContent from '@/components/reactbits/Animations/FadeContent/FadeContent';
 
@@ -22,27 +24,22 @@ type FormData = z.infer<typeof schema>;
 
 export function NewsletterSection() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 768px)');
-    setIsDesktop(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: { email: '' },
+  });
 
   const onSubmit = async (data: FormData) => {
+    void data;
     setStatus('loading');
     try {
-      // Simulated API call - replace with actual newsletter endpoint
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setStatus('success');
       reset();
@@ -54,12 +51,12 @@ export function NewsletterSection() {
   };
 
   return (
-    <section className="relative overflow-hidden bg-sage-black py-20 sm:py-24">
+    <section className="relative overflow-hidden bg-background py-20 sm:py-24">
       {/* Aurora Background - desktop only */}
       {isDesktop && (
-        <div className="absolute inset-0 opacity-[0.08] pointer-events-none">
+        <div className="absolute inset-0 opacity-[0.1] pointer-events-none">
           <Aurora
-            colorStops={['#BF9B60', '#A58146', '#D9BF91']}
+            colorStops={['#C9A56A', '#A58146', '#E3C99B']}
             amplitude={0.6}
             blend={0.7}
             speed={0.3}
@@ -68,7 +65,7 @@ export function NewsletterSection() {
       )}
 
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.04]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full opacity-[0.05]"
         style={{
           background: 'radial-gradient(circle, rgb(var(--sage-gold)) 0%, transparent 70%)',
         }}
@@ -84,7 +81,7 @@ export function NewsletterSection() {
         <div className="mt-3">
           <BlurText
             text="Recibí novedades exclusivas"
-            className="text-2xl sm:text-3xl font-bold text-sage-white tracking-tight font-display justify-center"
+            className="text-2xl sm:text-3xl font-bold text-sage-cream tracking-tight font-display justify-center"
             delay={50}
             animateBy="words"
             direction="bottom"
@@ -92,7 +89,7 @@ export function NewsletterSection() {
         </div>
 
         <FadeContent duration={700} delay={200}>
-          <p className="mt-3 text-gray-500 text-sm">
+          <p className="mt-3 text-sage-ivory/40 text-sm">
             Suscribite y obtené un <span className="text-sage-gold font-semibold">10% de descuento</span> en tu primera compra.
           </p>
         </FadeContent>
@@ -113,11 +110,11 @@ export function NewsletterSection() {
                   <input
                     type="email"
                     placeholder="tu@email.com"
-                    {...register('email', { required: 'El email es requerido' })}
-                    className={`w-full rounded-lg border bg-gray-900/50 px-4 py-3 text-sm text-sage-white placeholder-gray-600 focus:outline-none focus:ring-1 transition-colors ${
+                    {...register('email')}
+                    className={`w-full rounded-lg border bg-sage-surface/50 px-4 py-3 text-sm text-sage-cream placeholder-sage-ivory/25 focus:outline-none focus:ring-1 transition-colors ${
                       errors.email
                         ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/30'
-                        : 'border-gray-700 focus:border-sage-gold/50 focus:ring-sage-gold/30'
+                        : 'border-sage-surface-light focus:border-sage-gold/50 focus:ring-sage-gold/30'
                     }`}
                     aria-label="Email para newsletter"
                   />
@@ -153,7 +150,7 @@ export function NewsletterSection() {
         </FadeContent>
 
         <FadeContent duration={600} delay={400}>
-          <p className="mt-4 text-[11px] text-gray-600">
+          <p className="mt-4 text-[11px] text-sage-ivory/25">
             Sin spam. Podés desuscribirte cuando quieras.
           </p>
         </FadeContent>

@@ -20,7 +20,7 @@ export function CategoryCard({ category, index, isInView, featured = false }: Ca
   return (
     <Link
       href={ROUTES.CATEGORY_DETAIL(category.slug)}
-      className={`group relative flex flex-col justify-end overflow-hidden rounded-2xl bg-gray-100 cursor-pointer transition-all duration-500 hover:shadow-elegant-lg ${
+      className={`category-card-shell group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-2xl transition-all duration-500 hover:shadow-elegant-lg ${
         featured ? 'aspect-[4/5] sm:row-span-2' : 'aspect-[4/3]'
       } ${isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
       style={{ transitionDelay: `${index * 80}ms` }}
@@ -35,15 +35,15 @@ export function CategoryCard({ category, index, isInView, featured = false }: Ca
           onError={() => setImageError(true)}
         />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-          <Layers className="h-10 w-10 text-gray-300" />
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-sage-surface-light to-sage-surface-hover">
+          <Layers className="h-10 w-10 text-sage-ivory/30" />
         </div>
       )}
 
       {/* Gold border slide from left on hover */}
       <div className="absolute left-0 top-0 h-full w-1 bg-sage-gold scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top z-10" />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-sage-black/80 via-sage-black/20 to-transparent" />
+      <div className="category-card-overlay absolute inset-0" />
 
       <div className="relative p-5">
         <h3 className="text-base font-semibold text-sage-white tracking-tight">

@@ -9,10 +9,6 @@ import { ROUTES } from '@/constants';
 import { useCategories } from '@/features/products';
 import type { Category } from '@/features/products';
 
-/**
- * @ai-context Categories listing page showing all product categories.
- */
-
 export const dynamic = 'force-dynamic';
 
 function CategoryCard({ category }: { category: Category }) {
@@ -21,10 +17,9 @@ function CategoryCard({ category }: { category: Category }) {
   return (
     <Link
       href={ROUTES.CATEGORY_DETAIL(category.slug)}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-xl hover-lift"
+      className="category-card-shell group relative flex flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:border-sage-gold/25 hover:shadow-gold-glow hover-lift"
     >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-sage-surface-light to-sage-surface-hover">
         {category.image_url && !imageError ? (
           <Image
             src={category.image_url}
@@ -36,37 +31,29 @@ function CategoryCard({ category }: { category: Category }) {
           />
         ) : (
           <div className="flex h-full items-center justify-center">
-            <Layers className="h-12 w-12 text-gray-300" />
+            <Layers className="h-12 w-12 text-sage-ivory/25" />
           </div>
         )}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="category-card-overlay absolute inset-0" />
 
-        {/* Category Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-5">
-          <h3 className="text-xl font-bold text-white">
-            {category.name}
-          </h3>
+          <h3 className="font-display text-xl font-bold text-sage-white">{category.name}</h3>
           {category.products_count !== undefined && (
-            <p className="mt-1 text-sm text-white/80">
+            <p className="mt-1 text-sm text-sage-white/85">
               {category.products_count} {category.products_count === 1 ? 'producto' : 'productos'}
             </p>
           )}
         </div>
       </div>
 
-      {/* Description */}
       {category.description && (
         <div className="p-5">
-          <p className="line-clamp-2 text-sm text-gray-600">
-            {category.description}
-          </p>
+          <p className="line-clamp-2 text-sm text-sage-ivory/55">{category.description}</p>
         </div>
       )}
 
-      {/* Arrow indicator */}
-      <div className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-gray-600 opacity-0 backdrop-blur-sm shadow-lg transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0 translate-x-2">
+      <div className="absolute right-4 top-4 flex h-8 w-8 translate-x-2 items-center justify-center rounded-full border border-sage-gold/25 bg-background/75 text-sage-gold opacity-0 backdrop-blur-sm shadow-lg transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
         <ArrowRight className="h-4 w-4" />
       </div>
     </Link>
@@ -82,95 +69,95 @@ export default function CategoriesPage() {
   );
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-10 animate-slide-up">
-        <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">Categorías</h1>
-        <p className="mt-3 text-lg text-gray-600">
-          Explora nuestras categorías y encuentra lo que buscas
-        </p>
+    <div className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[560px] w-[560px] -translate-x-1/2 rounded-full bg-sage-gold/[0.04] blur-[120px]" />
       </div>
 
-      {/* Search */}
-      {categories.length > 6 && (
-        <div className="mb-8 max-w-md animate-slide-down">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-gray-900" />
-            <input
-              type="search"
-              placeholder="Buscar categorías..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pl-10 pr-4 text-sm focus:border-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 transition-all"
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div className="rounded-xl bg-red-50 border border-red-100 p-6 animate-slide-down">
-          <p className="text-sm font-medium text-red-900">{error}</p>
-        </div>
-      )}
-
-      {/* Loading State */}
-      {isLoading && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-slide-up"
-              style={{ animationDelay: `${i * 0.05}s` }}
-            >
-              <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl animate-shimmer" />
-              <div className="mt-4 space-y-2">
-                <div className="h-5 bg-gray-200 rounded animate-pulse w-1/2" />
-                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Categories Grid */}
-      {!isLoading && filteredCategories.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredCategories.map((category, i) => (
-            <div
-              key={category.id}
-              className="animate-slide-up"
-              style={{ animationDelay: `${i * 0.05}s` }}
-            >
-              <CategoryCard category={category} />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Empty State */}
-      {!isLoading && filteredCategories.length === 0 && !error && (
-        <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-          <Layers className="h-16 w-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900">
-            {searchQuery ? 'No se encontraron categorías' : 'No hay categorías disponibles'}
-          </h3>
-          <p className="mt-2 text-sm text-gray-500">
-            {searchQuery
-              ? 'Intenta con otro término de búsqueda'
-              : 'Vuelve más tarde para ver nuestras categorías'}
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-10 animate-slide-up">
+          <h1 className="font-display text-4xl font-bold text-sage-cream sm:text-5xl">Categorias</h1>
+          <p className="mt-3 text-lg text-sage-ivory/55">
+            Explora nuestras categorias y encuentra lo que buscas
           </p>
-          {searchQuery && (
-            <Button
-              variant="outline"
-              className="mt-4"
-              onClick={() => setSearchQuery('')}
-            >
-              Limpiar búsqueda
-            </Button>
-          )}
         </div>
-      )}
+
+        {categories.length > 6 && (
+          <div className="mb-8 max-w-md animate-slide-down">
+            <div className="group relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sage-ivory/35 transition-colors group-focus-within:text-sage-gold" />
+              <input
+                type="search"
+                placeholder="Buscar categorias..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full rounded-xl border border-sage-surface-hover bg-sage-surface-light py-2.5 pl-10 pr-4 text-sm text-sage-cream placeholder:text-sage-ivory/35 focus:border-sage-gold/40 focus:outline-none focus:ring-2 focus:ring-sage-gold/10 transition-all"
+              />
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-xl border border-red-500/20 bg-red-950/25 p-6 animate-slide-down">
+            <p className="text-sm font-medium text-red-300">{error}</p>
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-slide-up"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                <div className="aspect-[4/3] rounded-2xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover animate-shimmer" />
+                <div className="mt-4 space-y-2">
+                  <div className="h-5 w-1/2 rounded bg-sage-surface-light animate-pulse" />
+                  <div className="h-4 w-3/4 rounded bg-sage-surface-light animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filteredCategories.length > 0 && (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredCategories.map((category, i) => (
+              <div
+                key={category.id}
+                className="animate-slide-up"
+                style={{ animationDelay: `${i * 0.05}s` }}
+              >
+                <CategoryCard category={category} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!isLoading && filteredCategories.length === 0 && !error && (
+          <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+            <Layers className="mb-4 h-16 w-16 text-sage-ivory/25" />
+            <h3 className="text-lg font-semibold text-sage-cream">
+              {searchQuery ? 'No se encontraron categorias' : 'No hay categorias disponibles'}
+            </h3>
+            <p className="mt-2 text-sm text-sage-ivory/45">
+              {searchQuery
+                ? 'Intenta con otro termino de busqueda'
+                : 'Vuelve mas tarde para ver nuestras categorias'}
+            </p>
+            {searchQuery && (
+              <Button
+                variant="outline"
+                className="mt-4 border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold"
+                onClick={() => setSearchQuery('')}
+              >
+                Limpiar busqueda
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

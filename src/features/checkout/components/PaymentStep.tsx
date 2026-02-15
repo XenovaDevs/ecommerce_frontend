@@ -5,10 +5,6 @@ import { Button, Card, CardContent } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import type { PaymentMethod } from '../types';
 
-/**
- * @ai-context Payment method selection step.
- */
-
 interface PaymentStepProps {
   paymentMethods: PaymentMethod[];
   selectedMethod: PaymentMethod | null;
@@ -34,11 +30,9 @@ export function PaymentStep({
 }: PaymentStepProps) {
   return (
     <div className="space-y-8">
-      <Card>
+      <Card className="border border-sage-surface-light bg-sage-surface">
         <CardContent className="p-6">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900">
-            Método de pago
-          </h2>
+          <h2 className="mb-6 text-lg font-semibold text-sage-cream">Metodo de pago</h2>
 
           <div className="space-y-3">
             {paymentMethods.map((method) => {
@@ -51,65 +45,63 @@ export function PaymentStep({
                   type="button"
                   onClick={() => onMethodSelect(method)}
                   className={cn(
-                    'flex w-full items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors',
+                    'flex w-full items-center gap-4 rounded-lg border p-4 text-left transition-colors',
                     isSelected
-                      ? 'border-primary bg-primary/5'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-sage-gold/45 bg-sage-gold/10'
+                      : 'border-sage-surface-hover bg-sage-surface-light hover:border-sage-gold/35'
                   )}
                 >
                   <div
                     className={cn(
                       'flex h-12 w-12 items-center justify-center rounded-lg',
-                      isSelected ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
+                      isSelected ? 'bg-sage-gold text-sage-black' : 'bg-sage-surface-hover text-sage-ivory/55'
                     )}
                   >
                     <Icon className="h-6 w-6" />
                   </div>
 
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{method.name}</p>
+                    <p className="font-medium text-sage-cream">{method.name}</p>
                     {method.description && (
-                      <p className="text-sm text-gray-500">{method.description}</p>
+                      <p className="text-sm text-sage-ivory/45">{method.description}</p>
                     )}
                   </div>
 
-                  {isSelected && <Check className="h-5 w-5 text-primary" />}
+                  {isSelected && <Check className="h-5 w-5 text-sage-gold" />}
                 </button>
               );
             })}
           </div>
 
           {selectedMethod?.id === 'mercadopago' && (
-            <div className="mt-6 rounded-lg bg-blue-50 p-4">
-              <p className="text-sm text-blue-800">
-                Serás redirigido a Mercado Pago para completar el pago de forma segura.
-                Podrás pagar con tarjeta de crédito, débito, o dinero en cuenta.
+            <div className="mt-6 rounded-lg border border-sage-gold/25 bg-sage-gold/10 p-4">
+              <p className="text-sm text-sage-ivory/80">
+                Seras redirigido a Mercado Pago para completar el pago de forma segura.
+                Podras pagar con tarjeta de credito, debito, o dinero en cuenta.
               </p>
             </div>
           )}
 
           {selectedMethod?.id === 'bank_transfer' && (
-            <div className="mt-6 rounded-lg bg-yellow-50 p-4">
-              <p className="text-sm text-yellow-800">
-                Te enviaremos los datos bancarios por email después de confirmar el pedido.
-                Tu pedido quedará reservado por 48 horas.
+            <div className="mt-6 rounded-lg border border-sage-surface-hover bg-sage-surface-light p-4">
+              <p className="text-sm text-sage-ivory/70">
+                Te enviaremos los datos bancarios por email despues de confirmar el pedido.
+                Tu pedido quedara reservado por 48 horas.
               </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Navigation */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold"
+        >
           Volver
         </Button>
-        <Button
-          onClick={onNext}
-          disabled={!selectedMethod}
-          isLoading={isLoading}
-          size="lg"
-        >
+        <Button onClick={onNext} disabled={!selectedMethod} isLoading={isLoading} size="lg" variant="gold">
           Revisar pedido
         </Button>
       </div>

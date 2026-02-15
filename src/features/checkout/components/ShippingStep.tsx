@@ -11,10 +11,6 @@ import { formatCurrency } from '@/lib/utils';
 import { ValidationMessages } from '@/messages';
 import type { ShippingAddressForm, ShippingOption } from '../types';
 
-/**
- * @ai-context Shipping step with address form and shipping option selection.
- */
-
 const shippingSchema = z.object({
   first_name: z.string().min(2, ValidationMessages.min(2)),
   last_name: z.string().min(2, ValidationMessages.min(2)),
@@ -40,6 +36,11 @@ interface ShippingStepProps {
   onNext: () => void;
   isLoading?: boolean;
 }
+
+const fieldClassName =
+  'border-sage-surface-hover bg-sage-surface-light text-sage-cream placeholder:text-sage-ivory/35 hover:border-sage-gold/40 focus:border-sage-gold/40 focus:ring-sage-gold/10';
+const fieldContainerClassName =
+  '[&_label]:text-sage-ivory/70 [&_.text-red-600]:text-red-300';
 
 export function ShippingStep({
   initialAddress,
@@ -73,12 +74,9 @@ export function ShippingStep({
 
   return (
     <div className="space-y-8">
-      {/* Address Form */}
-      <Card>
+      <Card className="border border-sage-surface-light bg-sage-surface">
         <CardContent className="p-6">
-          <h2 className="mb-6 text-lg font-semibold text-gray-900">
-            Dirección de envío
-          </h2>
+          <h2 className="mb-6 text-lg font-semibold text-sage-cream">Direccion de envio</h2>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
@@ -87,12 +85,16 @@ export function ShippingStep({
                 {...register('first_name')}
                 error={errors.first_name?.message}
                 placeholder="Juan"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
               <Input
                 label="Apellido"
                 {...register('last_name')}
                 error={errors.last_name?.message}
-                placeholder="Pérez"
+                placeholder="Perez"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
             </div>
 
@@ -102,6 +104,8 @@ export function ShippingStep({
               {...register('email')}
               error={errors.email?.message}
               placeholder="tu@email.com"
+              className={fieldClassName}
+              containerClassName={fieldContainerClassName}
             />
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -111,13 +115,17 @@ export function ShippingStep({
                   {...register('street')}
                   error={errors.street?.message}
                   placeholder="Av. Corrientes"
+                  className={fieldClassName}
+                  containerClassName={fieldContainerClassName}
                 />
               </div>
               <Input
-                label="Número"
+                label="Numero"
                 {...register('number')}
                 error={errors.number?.message}
                 placeholder="1234"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
             </div>
 
@@ -126,6 +134,8 @@ export function ShippingStep({
               {...register('apartment')}
               error={errors.apartment?.message}
               placeholder="Piso 3, Depto B"
+              className={fieldClassName}
+              containerClassName={fieldContainerClassName}
             />
 
             <div className="grid gap-4 sm:grid-cols-3">
@@ -134,47 +144,53 @@ export function ShippingStep({
                 {...register('city')}
                 error={errors.city?.message}
                 placeholder="Buenos Aires"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
               <Input
                 label="Provincia"
                 {...register('state')}
                 error={errors.state?.message}
                 placeholder="CABA"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
               <Input
-                label="Código Postal"
+                label="Codigo Postal"
                 {...register('postal_code')}
                 error={errors.postal_code?.message}
                 placeholder="1000"
+                className={fieldClassName}
+                containerClassName={fieldContainerClassName}
               />
             </div>
 
             <Input
-              label="Teléfono"
+              label="Telefono"
               type="tel"
               {...register('phone')}
               error={errors.phone?.message}
               placeholder="+54 11 1234-5678"
+              className={fieldClassName}
+              containerClassName={fieldContainerClassName}
             />
 
             <Button
               type="submit"
               isLoading={isSubmitting || isLoading}
               className="w-full sm:w-auto"
+              variant="gold"
             >
-              {addressSubmitted ? 'Actualizar dirección' : 'Calcular envío'}
+              {addressSubmitted ? 'Actualizar direccion' : 'Calcular envio'}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Shipping Options */}
       {addressSubmitted && shippingOptions.length > 0 && (
-        <Card>
+        <Card className="border border-sage-surface-light bg-sage-surface">
           <CardContent className="p-6">
-            <h2 className="mb-6 text-lg font-semibold text-gray-900">
-              Opciones de envío
-            </h2>
+            <h2 className="mb-6 text-lg font-semibold text-sage-cream">Opciones de envio</h2>
 
             <div className="space-y-3">
               {shippingOptions.map((option) => {
@@ -186,45 +202,41 @@ export function ShippingStep({
                     type="button"
                     onClick={() => onOptionSelect(option)}
                     className={cn(
-                      'flex w-full items-center justify-between rounded-lg border-2 p-4 text-left transition-colors',
+                      'flex w-full items-center justify-between rounded-lg border p-4 text-left transition-colors',
                       isSelected
-                        ? 'border-primary bg-primary/5'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? 'border-sage-gold/45 bg-sage-gold/10'
+                        : 'border-sage-surface-hover bg-sage-surface-light hover:border-sage-gold/35'
                     )}
                   >
                     <div className="flex items-center gap-4">
                       <div
                         className={cn(
                           'flex h-10 w-10 items-center justify-center rounded-full',
-                          isSelected ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500'
+                          isSelected ? 'bg-sage-gold text-sage-black' : 'bg-sage-surface-hover text-sage-ivory/55'
                         )}
                       >
                         <Truck className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">
-                          {option.name}
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          {option.provider}
-                        </p>
+                        <p className="font-medium text-sage-cream">{option.name}</p>
+                        <p className="text-sm text-sage-ivory/45">{option.provider}</p>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-sage-cream">
                         {option.price === 0 ? 'Gratis' : formatCurrency(option.price)}
                       </p>
-                      <p className="flex items-center justify-end gap-1 text-sm text-gray-500">
+                      <p className="flex items-center justify-end gap-1 text-sm text-sage-ivory/45">
                         <Clock className="h-3 w-3" />
                         {option.estimated_days === 1
-                          ? '1 día'
-                          : `${option.estimated_days} días`}
+                          ? '1 dia'
+                          : `${option.estimated_days} dias`}
                       </p>
                     </div>
 
                     {isSelected && (
-                      <Check className="ml-2 h-5 w-5 text-primary" />
+                      <Check className="ml-2 h-5 w-5 text-sage-gold" />
                     )}
                   </button>
                 );
@@ -234,17 +246,11 @@ export function ShippingStep({
         </Card>
       )}
 
-      {/* Continue Button */}
       <div className="flex justify-end">
-        <Button
-          onClick={onNext}
-          disabled={!canProceed}
-          size="lg"
-        >
+        <Button onClick={onNext} disabled={!canProceed} size="lg" variant="gold">
           Continuar al pago
         </Button>
       </div>
     </div>
   );
 }
-

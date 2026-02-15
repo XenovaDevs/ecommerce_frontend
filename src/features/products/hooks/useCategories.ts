@@ -1,12 +1,8 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 import { productsService } from '../services';
 import type { Category } from '../types';
-
-/**
- * @ai-context Hook for fetching categories.
- */
 
 interface UseCategoriesState {
   categories: Category[];
@@ -25,17 +21,11 @@ export function useCategories(): UseCategoriesReturn {
     error: null,
   });
 
-  const fetchCategories = useCallback(async () => {
+  const refresh = useCallback(async () => {
     setState((prev) => ({ ...prev, isLoading: true, error: null }));
-
     try {
       const categories = await productsService.getCategories();
-
-      setState({
-        categories,
-        isLoading: false,
-        error: null,
-      });
+      setState({ categories, isLoading: false, error: null });
     } catch (error) {
       setState({
         categories: [],
@@ -45,11 +35,29 @@ export function useCategories(): UseCategoriesReturn {
     }
   }, []);
 
-  const refresh = useCallback(() => fetchCategories(), [fetchCategories]);
-
   useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+    let isMounted = true;
+
+    const bootstrap = async () => {
+      try {
+        const categories = await productsService.getCategories();
+        if (!isMounted) return;
+        setState({ categories, isLoading: false, error: null });
+      } catch (error) {
+        if (!isMounted) return;
+        setState({
+          categories: [],
+          isLoading: false,
+          error: error instanceof Error ? error.message : 'Error loading categories',
+        });
+      }
+    };
+
+    void bootstrap();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return {
     ...state,

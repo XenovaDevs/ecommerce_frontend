@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, AlertCircle, RefreshCw, Package } from 'lucide-react';
@@ -19,18 +19,26 @@ export function NewArrivals() {
   const [canScrollRight, setCanScrollRight] = useState(true);
   const { addItem } = useCart();
 
+  const loadProducts = async () => {
+    try {
+      const arrivals = await productsService.getNewArrivals(6);
+      setProducts(arrivals);
+      setError(null);
+    } catch {
+      setError('No pudimos cargar los nuevos productos.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const fetchProducts = () => {
     setIsLoading(true);
     setError(null);
-    productsService
-      .getNewArrivals(8)
-      .then(setProducts)
-      .catch(() => setError('No pudimos cargar los nuevos productos.'))
-      .finally(() => setIsLoading(false));
+    void loadProducts();
   };
 
   useEffect(() => {
-    fetchProducts();
+    void loadProducts();
   }, []);
 
   const checkScroll = () => {
@@ -58,16 +66,18 @@ export function NewArrivals() {
   const handleAddToCart = async (product: Product) => {
     try {
       await addItem({ product_id: product.id, quantity: 1 });
-    } catch {}
+    } catch {
+      // Error handled by cart context notifications.
+    }
   };
 
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <AlertCircle className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">{error}</p>
-        <Button variant="outline" size="md" onClick={fetchProducts} className="group">
-          <RefreshCw className="mr-2 h-4 w-4 group-hover:rotate-180 transition-transform duration-500" />
+        <AlertCircle className="mb-4 h-10 w-10 text-sage-ivory/35" />
+        <p className="mb-4 text-sage-ivory/55">{error}</p>
+        <Button variant="outline" size="md" onClick={fetchProducts} className="group border-sage-surface-hover text-sage-cream hover:bg-sage-surface-light">
+          <RefreshCw className="mr-2 h-4 w-4 transition-transform duration-500 group-hover:rotate-180" />
           Reintentar
         </Button>
       </div>
@@ -77,24 +87,23 @@ export function NewArrivals() {
   if (!isLoading && products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <Package className="h-10 w-10 text-gray-300 mb-4" />
-        <p className="text-gray-500 mb-4">No hay novedades por ahora.</p>
+        <Package className="mb-4 h-10 w-10 text-sage-ivory/35" />
+        <p className="mb-4 text-sage-ivory/55">No hay novedades por ahora.</p>
         <Link href={ROUTES.PRODUCTS}>
-          <Button variant="outline" size="md">Ver catálogo completo</Button>
+          <Button variant="outline" size="md" className="border-sage-surface-hover text-sage-cream hover:bg-sage-surface-light">Ver catalogo completo</Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="relative">
-      {/* Navigation arrows */}
+    <div className="relative mt-12">
       {!isLoading && products.length > 3 && (
         <>
           <button
             onClick={() => scroll('left')}
-            className={`absolute -left-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-sage-black hover:border-gray-300 transition-all ${
-              canScrollLeft ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            className={`absolute -left-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sage-gold/20 bg-card text-sage-gold shadow-lg transition-all hover:border-sage-gold/40 hover:bg-sage-gold/10 sm:flex ${
+              canScrollLeft ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
             aria-label="Anterior"
           >
@@ -102,8 +111,8 @@ export function NewArrivals() {
           </button>
           <button
             onClick={() => scroll('right')}
-            className={`absolute -right-4 top-1/2 -translate-y-1/2 z-10 hidden sm:flex h-10 w-10 items-center justify-center rounded-full bg-white border border-gray-200 shadow-lg text-gray-600 hover:text-sage-black hover:border-gray-300 transition-all ${
-              canScrollRight ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            className={`absolute -right-4 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sage-gold/20 bg-card text-sage-gold shadow-lg transition-all hover:border-sage-gold/40 hover:bg-sage-gold/10 sm:flex ${
+              canScrollRight ? 'opacity-100' : 'pointer-events-none opacity-0'
             }`}
             aria-label="Siguiente"
           >
@@ -116,10 +125,10 @@ export function NewArrivals() {
         <div className="flex gap-5 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="min-w-[260px] flex-shrink-0">
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 animate-shimmer" />
+              <div className="aspect-square animate-pulse rounded-2xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover" />
               <div className="mt-4 space-y-2.5">
-                <div className="h-4 rounded bg-gray-200 animate-pulse w-3/4" />
-                <div className="h-3 rounded bg-gray-200 animate-pulse w-1/2" />
+                <div className="h-4 w-3/4 animate-pulse rounded bg-sage-surface-light" />
+                <div className="h-3 w-1/2 animate-pulse rounded bg-sage-surface-light" />
               </div>
             </div>
           ))}
@@ -127,7 +136,7 @@ export function NewArrivals() {
       ) : (
         <div
           ref={scrollRef}
-          className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4"
+          className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4"
         >
           {products.map((product, i) => (
             <AnimatedContent

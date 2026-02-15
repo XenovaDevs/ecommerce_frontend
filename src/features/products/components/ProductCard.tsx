@@ -10,19 +10,6 @@ import { ROUTES } from '@/constants';
 import { formatCurrency } from '@/lib/utils';
 import type { Product } from '../types';
 
-/**
- * @ai-context ProductCard displays a single product in the catalog grid.
- *             Handles image, price, discount badge, add to cart, wishlist toggle.
- * @ai-props
- *   - product: Product data with id, name, slug, price, images, etc.
- *   - onAddToCart: Optional callback when adding to cart
- *   - onToggleWishlist: Optional callback for wishlist
- * @ai-a11y
- *   - Images have alt text
- *   - Buttons have aria-labels
- *   - Focus states for keyboard navigation
- */
-
 interface ProductCardProps {
   product: Product;
   onAddToCart?: (product: Product) => void;
@@ -51,12 +38,12 @@ export function ProductCard({
 
   return (
     <div
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-300 hover:shadow-xl hover-lift"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-sage-surface-light bg-sage-surface transition-all duration-300 hover:border-sage-gold/20 hover:shadow-gold-glow hover-lift"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Image Container */}
-      <Link href={productUrl} className="relative aspect-square overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <Link href={productUrl} className="relative aspect-square overflow-hidden bg-gradient-to-br from-sage-surface-light to-sage-surface-hover">
         <Image
           src={imageError ? '/images/placeholder-product.svg' : (isHovered && hoverImage ? hoverImage : mainImage)}
           alt={product.name}
@@ -68,7 +55,7 @@ export function ProductCard({
 
         {/* Gradient Overlay on Hover */}
         <div className={cn(
-          "absolute inset-0 bg-gradient-to-t from-black/20 to-transparent transition-opacity duration-300",
+          "absolute inset-0 bg-gradient-to-t from-sage-black/40 to-transparent transition-opacity duration-300",
           isHovered ? "opacity-100" : "opacity-0"
         )} />
 
@@ -85,7 +72,7 @@ export function ProductCard({
             </Badge>
           )}
           {product.stock === 0 && (
-            <Badge variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm">
+            <Badge variant="outline" size="sm" className="bg-sage-surface/90 backdrop-blur-sm text-sage-cream border-sage-surface-hover">
               Agotado
             </Badge>
           )}
@@ -104,8 +91,8 @@ export function ProductCard({
               onToggleWishlist?.(product);
             }}
             className={cn(
-              'flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm shadow-lg transition-all duration-200 hover:scale-110',
-              isInWishlist ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+              'flex h-9 w-9 items-center justify-center rounded-xl glass-dark shadow-lg transition-all duration-200 hover:scale-110',
+              isInWishlist ? 'text-red-400' : 'text-sage-cream/70 hover:text-red-400'
             )}
             aria-label={isInWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'}
           >
@@ -116,7 +103,7 @@ export function ProductCard({
               e.preventDefault();
               window.location.href = productUrl;
             }}
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm text-gray-600 shadow-lg transition-all duration-200 hover:text-primary hover:scale-110"
+            className="flex h-9 w-9 items-center justify-center rounded-xl glass-dark text-sage-cream/70 shadow-lg transition-all duration-200 hover:text-sage-gold hover:scale-110"
             aria-label="Ver producto"
           >
             <Eye className="h-4 w-4" />
@@ -130,7 +117,7 @@ export function ProductCard({
         {product.category && (
           <Link
             href={ROUTES.CATEGORY_DETAIL(product.category.slug)}
-            className="mb-2 text-xs font-medium text-primary/80 hover:text-primary transition-colors"
+            className="mb-2 text-xs font-medium text-sage-gold/70 hover:text-sage-gold transition-colors"
           >
             {product.category.name}
           </Link>
@@ -138,18 +125,18 @@ export function ProductCard({
 
         {/* Name */}
         <Link href={productUrl} className="mb-3">
-          <h3 className="line-clamp-2 text-base font-semibold text-gray-900 transition-colors hover:text-primary leading-snug">
+          <h3 className="line-clamp-2 text-base font-semibold text-sage-cream transition-colors hover:text-sage-gold leading-snug">
             {product.name}
           </h3>
         </Link>
 
         {/* Price */}
         <div className="mt-auto flex items-baseline gap-2 mb-4">
-          <span className="text-xl font-bold text-gray-900">
+          <span className="text-xl font-bold text-sage-cream">
             {formatCurrency(product.price)}
           </span>
           {hasDiscount && (
-            <span className="text-sm text-gray-400 line-through">
+            <span className="text-sm text-sage-ivory/35 line-through">
               {formatCurrency(product.compare_at_price!)}
             </span>
           )}
@@ -157,9 +144,9 @@ export function ProductCard({
 
         {/* Add to Cart Button */}
         <Button
-          variant={product.stock === 0 ? "outline" : "sage"}
+          variant={product.stock === 0 ? "outline" : "gold"}
           size="md"
-          className="w-full shadow-sm"
+          className="w-full"
           disabled={product.stock === 0}
           onClick={() => onAddToCart?.(product)}
         >
@@ -170,4 +157,3 @@ export function ProductCard({
     </div>
   );
 }
-

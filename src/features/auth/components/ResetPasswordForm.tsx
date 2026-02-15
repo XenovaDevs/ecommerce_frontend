@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -34,6 +34,7 @@ const resetPasswordSchema = z
   });
 
 type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+type ApiErrorShape = { response?: { data?: { message?: string } } };
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -58,7 +59,7 @@ export function ResetPasswordForm() {
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token || !email) {
-      setError('El enlace de recuperación es inválido o ha expirado.');
+      setError('El enlace de recuperaciÃ³n es invÃ¡lido o ha expirado.');
       return;
     }
 
@@ -73,10 +74,10 @@ export function ResetPasswordForm() {
         password_confirmation: data.password_confirmation,
       });
       setIsSuccess(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        err?.response?.data?.message ||
-        'No pudimos restablecer tu contraseña. El enlace puede haber expirado.'
+        (err as ApiErrorShape).response?.data?.message ||
+        'No pudimos restablecer tu contraseÃ±a. El enlace puede haber expirado.'
       );
     } finally {
       setIsLoading(false);
@@ -90,9 +91,9 @@ export function ResetPasswordForm() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
             <Lock className="h-8 w-8 text-red-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Enlace inválido</h2>
+          <h2 className="text-xl font-bold text-gray-900">Enlace invÃ¡lido</h2>
           <p className="mt-2 text-sm text-gray-600">
-            El enlace de recuperación es inválido o ha expirado.
+            El enlace de recuperaciÃ³n es invÃ¡lido o ha expirado.
             Solicita uno nuevo.
           </p>
           <div className="mt-6 space-y-3">
@@ -102,7 +103,7 @@ export function ResetPasswordForm() {
             <Link href={ROUTES.LOGIN} className="block">
               <Button variant="ghost" fullWidth>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Volver al inicio de sesión
+                Volver al inicio de sesiÃ³n
               </Button>
             </Link>
           </div>
@@ -118,10 +119,10 @@ export function ResetPasswordForm() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900">Contraseña restablecida</h2>
+          <h2 className="text-xl font-bold text-gray-900">ContraseÃ±a restablecida</h2>
           <p className="mt-2 text-sm text-gray-600">
-            Tu contraseña fue actualizada correctamente.
-            Ya puedes iniciar sesión con tu nueva contraseña.
+            Tu contraseÃ±a fue actualizada correctamente.
+            Ya puedes iniciar sesiÃ³n con tu nueva contraseÃ±a.
           </p>
           <Link href={ROUTES.LOGIN} className="mt-6 block">
             <Button fullWidth>{UIMessages.AUTH.LOGIN}</Button>
@@ -136,7 +137,7 @@ export function ResetPasswordForm() {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">{UIMessages.AUTH.RESET_PASSWORD}</CardTitle>
         <p className="mt-2 text-sm text-gray-600">
-          Ingresa tu nueva contraseña.
+          Ingresa tu nueva contraseÃ±a.
         </p>
       </CardHeader>
       <CardContent>
@@ -150,7 +151,7 @@ export function ResetPasswordForm() {
           <Input
             {...register('password')}
             type="password"
-            label="Nueva contraseña"
+            label="Nueva contraseÃ±a"
             placeholder="********"
             error={errors.password?.message}
             leftIcon={<Lock className="h-4 w-4" />}
@@ -180,10 +181,11 @@ export function ResetPasswordForm() {
             className="flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            Volver al inicio de sesión
+            Volver al inicio de sesiÃ³n
           </Link>
         </form>
       </CardContent>
     </Card>
   );
 }
+

@@ -13,10 +13,6 @@ import { useCart } from '@/features/cart';
 import { formatCurrency } from '@/lib/utils';
 import { ROUTES } from '@/constants';
 
-/**
- * @ai-context Product detail page showing full product information.
- */
-
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
 }
@@ -46,22 +42,22 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
     return (
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="animate-slide-up">
-          <div className="h-8 w-40 bg-gradient-to-r from-gray-200 to-gray-100 rounded-lg animate-shimmer mb-10" />
+          <div className="mb-10 h-8 w-40 rounded-lg bg-gradient-to-r from-sage-surface-light to-sage-surface animate-shimmer" />
           <div className="grid gap-12 lg:grid-cols-2">
             <div className="space-y-4">
-              <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl animate-shimmer shadow-lg" />
+              <div className="aspect-square rounded-3xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover animate-shimmer shadow-lg" />
               <div className="grid grid-cols-4 gap-3">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl animate-shimmer" />
+                  <div key={i} className="aspect-square rounded-xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover animate-shimmer" />
                 ))}
               </div>
             </div>
             <div className="space-y-6">
-              <div className="h-10 w-3/4 bg-gray-200 rounded-lg animate-pulse" />
-              <div className="h-8 w-1/3 bg-gray-200 rounded-lg animate-pulse" />
-              <div className="h-24 bg-gray-200 rounded-xl animate-pulse" />
-              <div className="h-14 bg-gray-200 rounded-xl animate-pulse" />
-              <div className="h-12 bg-gray-200 rounded-xl animate-pulse" />
+              <div className="h-10 w-3/4 rounded-lg bg-sage-surface-light animate-pulse" />
+              <div className="h-8 w-1/3 rounded-lg bg-sage-surface-light animate-pulse" />
+              <div className="h-24 rounded-xl bg-sage-surface-light animate-pulse" />
+              <div className="h-14 rounded-xl bg-sage-surface-light animate-pulse" />
+              <div className="h-12 rounded-xl bg-sage-surface-light animate-pulse" />
             </div>
           </div>
         </div>
@@ -92,267 +88,265 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      {/* Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(getProductSchema(product)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(getBreadcrumbSchema([
-            { name: 'Inicio', url: '/' },
-            { name: 'Productos', url: '/products' },
-            ...(product.category ? [{ name: product.category.name, url: `/categories/${product.category.slug}` }] : []),
-            { name: product.name, url: `/products/${product.slug}` },
-          ])),
-        }}
-      />
-
-      {/* Back Button & Breadcrumb */}
-      <div className="mb-10 animate-slide-up">
-        <Link
-          href={ROUTES.PRODUCTS}
-          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-primary transition-colors group mb-4"
-        >
-          <ChevronLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-          Volver a productos
-        </Link>
-        <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm text-gray-500">
-          <Link href={ROUTES.HOME} className="hover:text-primary transition-colors">
-            Inicio
-          </Link>
-          <span>/</span>
-          <Link href={ROUTES.PRODUCTS} className="hover:text-primary transition-colors">
-            Productos
-          </Link>
-          {product.category && (
-            <>
-              <span>/</span>
-              <Link
-                href={ROUTES.CATEGORY_DETAIL(product.category.slug)}
-                className="hover:text-primary transition-colors"
-              >
-                {product.category.name}
-              </Link>
-            </>
-          )}
-          <span>/</span>
-          <span className="text-gray-900 font-medium">{product.name}</span>
-        </nav>
+    <div className="relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-10 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-sage-gold/[0.04] blur-[130px]" />
       </div>
 
-      <div className="grid gap-12 lg:grid-cols-2">
-        {/* Images */}
-        <div className="animate-slide-in-left">
-          {/* Main Image */}
-          <div className="relative aspect-square overflow-hidden rounded-3xl bg-gradient-to-br from-gray-50 to-gray-100 mb-4 shadow-xl border border-gray-100 group">
-            <Image
-              src={mainImage}
-              alt={product.name}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-              priority
-            />
-            {hasDiscount && (
-              <Badge variant="glow" size="lg" className="absolute left-5 top-5 shadow-2xl">
-                -{discountPercentage}%
-              </Badge>
+      <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(getProductSchema(product)) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(getBreadcrumbSchema([
+              { name: 'Inicio', url: '/' },
+              { name: 'Productos', url: '/products' },
+              ...(product.category ? [{ name: product.category.name, url: `/categories/${product.category.slug}` }] : []),
+              { name: product.name, url: `/products/${product.slug}` },
+            ])),
+          }}
+        />
+
+        <div className="mb-10 animate-slide-up">
+          <Link
+            href={ROUTES.PRODUCTS}
+            className="group mb-4 inline-flex items-center gap-2 text-sm font-medium text-sage-ivory/60 transition-colors hover:text-sage-gold"
+          >
+            <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+            Volver a productos
+          </Link>
+          <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm text-sage-ivory/45">
+            <Link href={ROUTES.HOME} className="hover:text-sage-gold transition-colors">
+              Inicio
+            </Link>
+            <span>/</span>
+            <Link href={ROUTES.PRODUCTS} className="hover:text-sage-gold transition-colors">
+              Productos
+            </Link>
+            {product.category && (
+              <>
+                <span>/</span>
+                <Link
+                  href={ROUTES.CATEGORY_DETAIL(product.category.slug)}
+                  className="hover:text-sage-gold transition-colors"
+                >
+                  {product.category.name}
+                </Link>
+              </>
             )}
-            {product.is_new && (
-              <Badge variant="gradient-sage" size="lg" className="absolute left-5 top-16" pulse>
-                Nuevo
-              </Badge>
+            <span>/</span>
+            <span className="font-medium text-sage-cream">{product.name}</span>
+          </nav>
+        </div>
+
+        <div className="grid gap-12 lg:grid-cols-2">
+          <div className="animate-slide-in-left">
+            <div className="group relative mb-4 aspect-square overflow-hidden rounded-3xl border border-sage-surface-light bg-gradient-to-br from-sage-surface-light to-sage-surface-hover shadow-xl">
+              <Image
+                src={mainImage}
+                alt={product.name}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                priority
+              />
+              {hasDiscount && (
+                <Badge variant="glow-gold" size="lg" className="absolute left-5 top-5 shadow-2xl">
+                  -{discountPercentage}%
+                </Badge>
+              )}
+              {product.is_new && (
+                <Badge variant="gradient-sage" size="lg" className="absolute left-5 top-16" pulse>
+                  Nuevo
+                </Badge>
+              )}
+            </div>
+
+            {product.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-3">
+                {product.images.map((image, index) => (
+                  <button
+                    key={image.id}
+                    onClick={() => setSelectedImage(index)}
+                    className={`aspect-square overflow-hidden rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                      selectedImage === index
+                        ? 'border-sage-gold shadow-gold'
+                        : 'border-sage-surface-hover hover:border-sage-gold/40'
+                    }`}
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.alt || product.name}
+                      width={100}
+                      height={100}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
-          {/* Thumbnails */}
-          {product.images.length > 1 && (
-            <div className="grid grid-cols-4 gap-3">
-              {product.images.map((image, index) => (
-                <button
-                  key={image.id}
-                  onClick={() => setSelectedImage(index)}
-                  className={`aspect-square overflow-hidden rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
-                    selectedImage === index
-                      ? 'border-primary shadow-lg ring-2 ring-primary/20'
-                      : 'border-gray-200 hover:border-gray-300 shadow-sm'
-                  }`}
-                >
-                  <Image
-                    src={image.url}
-                    alt={image.alt || product.name}
-                    width={100}
-                    height={100}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+          <div className="animate-slide-in-right">
+            <h1 className="font-display text-3xl font-bold leading-tight text-sage-cream sm:text-4xl lg:text-5xl">
+              {product.name}
+            </h1>
 
-        {/* Product Info */}
-        <div className="animate-slide-in-right">
-          <h1 className="text-3xl font-bold text-gray-900 leading-tight sm:text-4xl lg:text-5xl">{product.name}</h1>
-
-          {/* Price */}
-          <div className="mt-6 flex flex-wrap items-baseline gap-3 sm:gap-4">
-            <span className="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
-              {formatCurrency(product.price)}
-            </span>
-            {hasDiscount && (
-              <span className="text-xl text-gray-400 line-through sm:text-2xl">
-                {formatCurrency(product.compare_at_price!)}
+            <div className="mt-6 flex flex-wrap items-baseline gap-3 sm:gap-4">
+              <span className="text-3xl font-bold text-sage-cream sm:text-4xl lg:text-5xl">
+                {formatCurrency(product.price)}
               </span>
-            )}
-          </div>
-
-          {/* Short Description */}
-          {product.short_description && (
-            <p className="mt-6 text-lg text-gray-600 leading-relaxed">{product.short_description}</p>
-          )}
-
-          {/* Stock Status */}
-          <div className="mt-8">
-            {isOutOfStock ? (
-              <Badge variant="danger" size="lg" className="text-sm">
-                Sin stock
-              </Badge>
-            ) : product.stock < 10 ? (
-              <Badge variant="warning" size="lg" pulse className="text-sm">
-                Solo {product.stock} unidades disponibles
-              </Badge>
-            ) : (
-              <Badge variant="success" size="lg" className="text-sm">
-                En stock
-              </Badge>
-            )}
-          </div>
-
-          {/* Quantity Selector */}
-          {!isOutOfStock && (
-            <div className="mt-8">
-              <label className="mb-3 block text-base font-semibold text-gray-900">
-                Cantidad
-              </label>
-              <div className="inline-flex items-center rounded-xl border-2 border-gray-200 bg-white shadow-sm">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="rounded-l-xl px-4 py-3 text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:px-5"
-                >
-                  <span className="text-lg font-semibold">−</span>
-                </button>
-                <span className="w-16 text-center text-base font-bold text-gray-900">
-                  {quantity}
+              {hasDiscount && (
+                <span className="text-xl text-sage-ivory/35 line-through sm:text-2xl">
+                  {formatCurrency(product.compare_at_price!)}
                 </span>
-                <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  className="rounded-r-xl px-4 py-3 text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 sm:px-5"
-                >
-                  <span className="text-lg font-semibold">+</span>
-                </button>
+              )}
+            </div>
+
+            {product.short_description && (
+              <p className="mt-6 text-lg leading-relaxed text-sage-ivory/60">{product.short_description}</p>
+            )}
+
+            <div className="mt-8">
+              {isOutOfStock ? (
+                <Badge variant="danger" size="lg" className="text-sm">
+                  Sin stock
+                </Badge>
+              ) : product.stock < 10 ? (
+                <Badge variant="warning" size="lg" pulse className="text-sm">
+                  Solo {product.stock} unidades disponibles
+                </Badge>
+              ) : (
+                <Badge variant="success" size="lg" className="text-sm">
+                  En stock
+                </Badge>
+              )}
+            </div>
+
+            {!isOutOfStock && (
+              <div className="mt-8">
+                <label className="mb-3 block text-base font-semibold text-sage-cream">
+                  Cantidad
+                </label>
+                <div className="inline-flex items-center rounded-xl border border-sage-surface-hover bg-sage-surface-light shadow-sm">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="rounded-l-xl px-4 py-3 text-sage-ivory/70 transition-colors hover:bg-sage-surface-hover hover:text-sage-cream sm:px-5"
+                  >
+                    <span className="text-lg font-semibold">-</span>
+                  </button>
+                  <span className="w-16 text-center text-base font-bold text-sage-cream">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                    className="rounded-r-xl px-4 py-3 text-sage-ivory/70 transition-colors hover:bg-sage-surface-hover hover:text-sage-cream sm:px-5"
+                  >
+                    <span className="text-lg font-semibold">+</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+              <Button
+                size="xl"
+                variant="gold"
+                className="flex-1"
+                onClick={handleAddToCart}
+                disabled={isOutOfStock}
+                isLoading={isAddingToCart}
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                {isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
+              </Button>
+              <Button
+                size="xl"
+                variant="outline"
+                className="border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold sm:w-auto"
+              >
+                <Heart className="h-5 w-5" />
+              </Button>
+              <Button
+                size="xl"
+                variant="outline"
+                className="border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold sm:w-auto"
+              >
+                <Share2 className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="mt-10 space-y-4 rounded-2xl border border-sage-surface-light bg-sage-surface p-4 shadow-sm sm:p-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sage-gold/15 text-sage-gold">
+                  <Truck className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sage-cream">Envio a todo el pais</p>
+                  <p className="text-sm text-sage-ivory/55">Recibelo en 3-5 dias habiles</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-sage-gold/15 text-sage-gold">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sage-cream">Compra protegida</p>
+                  <p className="text-sm text-sage-ivory/55">Garantia de devolucion de 30 dias</p>
+                </div>
               </div>
             </div>
-          )}
 
-          {/* Actions */}
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
-            <Button
-              size="xl"
-              variant="gradient-sage"
-              className="flex-1 shadow-xl shadow-primary/20"
-              onClick={handleAddToCart}
-              disabled={isOutOfStock}
-              isLoading={isAddingToCart}
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              {isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}
-            </Button>
-            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md sm:w-auto">
-              <Heart className="h-5 w-5" />
-            </Button>
-            <Button size="xl" variant="outline" className="shadow-sm hover:shadow-md sm:w-auto">
-              <Share2 className="h-5 w-5" />
-            </Button>
+            {product.sku && (
+              <p className="mt-6 text-sm font-medium text-sage-ivory/45">
+                Codigo: <span className="text-sage-ivory/70">{product.sku}</span>
+              </p>
+            )}
           </div>
-
-          {/* Features */}
-          <div className="mt-10 space-y-4 rounded-2xl border border-gray-100 bg-gradient-to-br from-gray-50 to-white p-4 shadow-sm sm:p-6">
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Truck className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Envío a todo el país</p>
-                <p className="text-sm text-gray-600">Recíbelo en 3-5 días hábiles</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Shield className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900">Compra protegida</p>
-                <p className="text-sm text-gray-600">Garantía de devolución de 30 días</p>
-              </div>
-            </div>
-          </div>
-
-          {/* SKU */}
-          {product.sku && (
-            <p className="mt-6 text-sm font-medium text-gray-500">
-              Código: <span className="text-gray-700">{product.sku}</span>
-            </p>
-          )}
         </div>
-      </div>
 
-      {/* Description */}
-      {product.description && (
-        <Card variant="elevated" className="mt-16 animate-fade-in">
-          <CardContent className="p-8 lg:p-10">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 lg:text-3xl">
-              Descripción del producto
-            </h2>
-            <div
-              className="prose prose-lg max-w-none text-gray-600 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
-            />
-          </CardContent>
-        </Card>
-      )}
+        {product.description && (
+          <Card variant="elevated" className="mt-16 animate-fade-in border border-sage-surface-light bg-sage-surface">
+            <CardContent className="p-8 lg:p-10">
+              <h2 className="mb-6 font-display text-2xl font-bold text-sage-cream lg:text-3xl">
+                Descripcion del producto
+              </h2>
+              <div
+                className="prose prose-lg prose-invert max-w-none text-sage-ivory/60 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(product.description) }}
+              />
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Related Products Placeholder */}
-      <div className="mt-20 animate-fade-in">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-900 lg:text-4xl">
-              Productos relacionados
-            </h2>
-            <p className="mt-2 text-gray-600">
-              También te puede interesar
-            </p>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div
-              key={i}
-              className="animate-slide-up"
-              style={{ animationDelay: `${i * 0.1}s` }}
-            >
-              <div className="aspect-square rounded-2xl bg-gradient-to-br from-gray-100 to-gray-200 animate-shimmer shadow-sm hover:shadow-xl transition-all duration-300 hover-lift" />
-              <div className="mt-4 space-y-2">
-                <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4" />
-                <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2" />
-              </div>
+        <div className="mt-20 animate-fade-in">
+          <div className="mb-8 flex items-end justify-between">
+            <div>
+              <h2 className="font-display text-3xl font-bold text-sage-cream lg:text-4xl">
+                Productos relacionados
+              </h2>
+              <p className="mt-2 text-sage-ivory/55">Tambien te puede interesar</p>
             </div>
-          ))}
+          </div>
+          <div className="grid grid-cols-1 gap-6 min-[420px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="animate-slide-up"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className="aspect-square rounded-2xl bg-gradient-to-br from-sage-surface-light to-sage-surface-hover animate-shimmer shadow-sm transition-all duration-300 hover:shadow-gold-glow hover-lift" />
+                <div className="mt-4 space-y-2">
+                  <div className="h-4 w-3/4 rounded bg-sage-surface-light animate-pulse" />
+                  <div className="h-3 w-1/2 rounded bg-sage-surface-light animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

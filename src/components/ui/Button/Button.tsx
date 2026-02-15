@@ -34,7 +34,7 @@ const buttonVariants = cva(
       variant: {
         // Sage Black - Primary brand button
         sage:
-          'bg-sage-black text-sage-white shadow-elegant hover:shadow-elegant-lg hover:bg-sage-black/90 focus-visible:ring-sage-black relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-1000',
+          'bg-sage-black text-sage-white shadow-elegant hover:shadow-elegant-lg hover:bg-sage-black/90 focus-visible:ring-ring relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/15 before:to-transparent before:translate-x-[-200%] hover:before:translate-x-[200%] before:transition-transform before:duration-1000',
 
         // Gold - Luxury accent button
         gold:
@@ -46,11 +46,11 @@ const buttonVariants = cva(
 
         // Outline - Sophisticated border
         outline:
-          'border-2 border-sage-gray-300 bg-background text-sage-black hover:bg-sage-gray-50 hover:border-sage-black focus-visible:ring-sage-black transition-sophisticated',
+          'border-2 border-border bg-background text-foreground hover:bg-muted hover:border-sage-gold/45 focus-visible:ring-ring transition-sophisticated',
 
         // Ghost - Minimal interaction
         ghost:
-          'text-sage-black hover:bg-sage-gray-100 focus-visible:ring-sage-black transition-sophisticated',
+          'text-foreground hover:bg-muted focus-visible:ring-ring transition-sophisticated',
 
         // Danger - Understated destructive
         danger:
@@ -58,7 +58,7 @@ const buttonVariants = cva(
 
         // Link - Text button
         link:
-          'text-sage-black underline-offset-4 hover:underline focus-visible:ring-sage-black',
+          'text-foreground underline-offset-4 hover:underline focus-visible:ring-ring',
 
         // Gradient - Sophisticated gradient
         'gradient-sage':

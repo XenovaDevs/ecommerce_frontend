@@ -8,13 +8,21 @@ export const customerCredentials = {
   password: process.env.E2E_CUSTOMER_PASSWORD || 'password',
 };
 
-type AnyJson = Record<string, any>;
+type JsonObject = Record<string, unknown>;
+type ApiEntity = {
+  id?: string | number;
+  slug?: string;
+  identifier?: string;
+  code?: string;
+  uuid?: string;
+};
 
 const apiPath = (path: string) => (path.startsWith('/') ? path.slice(1) : path);
 
-export const unwrapData = <T>(payload: AnyJson | undefined): T => {
+export const unwrapData = <T>(payload: JsonObject | undefined): T => {
   if (!payload) return [] as unknown as T;
-  return (payload.data ?? payload) as T;
+  const data = payload.data as T | undefined;
+  return (data ?? (payload as unknown as T));
 };
 
 export async function newApiContext(token?: string): Promise<APIRequestContext> {
@@ -46,19 +54,23 @@ export async function loginAsCustomer(): Promise<{ token: string; api: APIReques
 export async function getFirstProduct(api: APIRequestContext): Promise<{ slug: string; id?: string } | null> {
   const res = await api.get(apiPath(API_ENDPOINTS.PRODUCTS.LIST));
   if (!res.ok()) return null;
-  const list = unwrapData<any[]>(await res.json());
+  const list = unwrapData<ApiEntity[]>(await res.json());
   const product = list?.[0];
   if (!product) return null;
-  return { slug: product.slug ?? product.identifier ?? product.id, id: product.id };
+  const slug = String(product.slug ?? product.identifier ?? product.id ?? '');
+  const id = product.id !== undefined ? String(product.id) : undefined;
+  return slug ? { slug, id } : null;
 }
 
 export async function getFirstCategory(api: APIRequestContext): Promise<{ slug: string; id?: string } | null> {
   const res = await api.get(apiPath(API_ENDPOINTS.CATEGORIES.LIST));
   if (!res.ok()) return null;
-  const list = unwrapData<any[]>(await res.json());
+  const list = unwrapData<ApiEntity[]>(await res.json());
   const category = list?.[0];
   if (!category) return null;
-  return { slug: category.slug ?? category.id ?? category.code, id: category.id };
+  const slug = String(category.slug ?? category.id ?? category.code ?? '');
+  const id = category.id !== undefined ? String(category.id) : undefined;
+  return slug ? { slug, id } : null;
 }
 
 export async function ensureCartWithItem(api: APIRequestContext, productId: string): Promise<void> {
@@ -83,8 +95,9 @@ export async function ensureAddress(api: APIRequestContext): Promise<string | nu
     },
   });
   if (!res.ok()) return null;
-  const body = unwrapData<any>(await res.json());
-  return body?.id ?? body?.uuid ?? null;
+  const body = unwrapData<ApiEntity>(await res.json());
+  const id = body?.id ?? body?.uuid ?? null;
+  return id !== null && id !== undefined ? String(id) : null;
 }
 
 export { API_BASE_URL, API_ENDPOINTS, apiPath };

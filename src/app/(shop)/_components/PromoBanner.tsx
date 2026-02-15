@@ -15,12 +15,12 @@ const PROMO_END = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 function CountdownUnit({ value, label }: { value: number; label: string }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-sage-gold/10 border border-sage-gold/20">
+      <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl bg-sage-surface border border-sage-gold/25">
         <span className="text-lg sm:text-xl font-bold text-sage-gold font-display">
           {String(value).padStart(2, '0')}
         </span>
       </div>
-      <span className="mt-1.5 text-[10px] uppercase tracking-wider text-gray-500">{label}</span>
+      <span className="mt-1.5 text-[10px] uppercase tracking-wider text-sage-ivory/40">{label}</span>
     </div>
   );
 }
@@ -31,7 +31,7 @@ export function PromoBanner() {
   if (isExpired) return null;
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-sage-black via-gray-900 to-sage-black py-16 sm:py-20">
+    <section className="relative overflow-hidden bg-gradient-to-br from-sage-surface via-background to-sage-surface py-16 sm:py-20">
       {/* Gold accent glow */}
       <div
         className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-[0.08]"
@@ -51,7 +51,7 @@ export function PromoBanner() {
           <div className="flex justify-center mb-6">
             <StarBorder
               as="div"
-              color="rgb(191, 155, 96)"
+              color="rgb(201, 165, 106)"
               speed="4s"
               className="!rounded-full"
             >
@@ -66,10 +66,10 @@ export function PromoBanner() {
         </AnimatedContent>
 
         <AnimatedContent distance={40} duration={0.7} delay={0.1}>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-sage-white tracking-tight leading-[1.1] font-display">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-sage-cream tracking-tight leading-[1.1] font-display">
             Hasta{' '}
             <GradientText
-              colors={['#A58146', '#D9BF91', '#BF9B60', '#D9BF91', '#A58146']}
+              colors={['#A58146', '#E3C99B', '#C9A56A', '#E3C99B', '#A58146']}
               animationSpeed={4}
               className="inline"
             >
@@ -81,7 +81,7 @@ export function PromoBanner() {
         </AnimatedContent>
 
         <AnimatedContent distance={30} duration={0.6} delay={0.2}>
-          <p className="mt-4 text-gray-400 text-base max-w-lg mx-auto">
+          <p className="mx-auto mt-4 max-w-lg text-base text-sage-ivory/65">
             Aprovechá descuentos exclusivos por tiempo limitado en nuestra selección premium.
           </p>
         </AnimatedContent>

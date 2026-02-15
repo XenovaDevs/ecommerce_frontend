@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -8,10 +8,6 @@ import { Card, CardContent } from '@/components/ui';
 import { useAuth } from '@/features/auth';
 import { ROUTES } from '@/constants';
 import { cn } from '@/lib/utils';
-
-/**
- * @ai-context Account layout with sidebar navigation for user account pages.
- */
 
 export const dynamic = 'force-dynamic';
 
@@ -41,10 +37,10 @@ export default function AccountLayout({
     return (
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="animate-slide-up">
-          <div className="h-10 w-72 bg-gradient-to-r from-gray-200 to-gray-100 rounded-xl animate-shimmer mb-10" />
+          <div className="mb-10 h-10 w-72 animate-shimmer rounded-xl bg-gradient-to-r from-sage-surface-light to-sage-surface" />
           <div className="grid gap-6 lg:grid-cols-4 lg:gap-10">
-            <div className="h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl animate-shimmer shadow-lg" />
-            <div className="lg:col-span-3 h-96 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl animate-shimmer shadow-lg" />
+            <div className="h-80 animate-shimmer rounded-3xl bg-gradient-to-br from-sage-surface-light to-sage-surface" />
+            <div className="h-96 animate-shimmer rounded-3xl bg-gradient-to-br from-sage-surface-light to-sage-surface lg:col-span-3" />
           </div>
         </div>
       </div>
@@ -59,16 +55,15 @@ export default function AccountLayout({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="mb-10 animate-slide-up">
-        <h1 className="text-3xl font-bold text-gray-900 sm:text-5xl">Mi cuenta</h1>
-        <p className="mt-3 text-base text-gray-600 sm:text-lg">
-          Gestiona tu perfil y preferencias
+        <h1 className="font-display text-3xl font-bold tracking-tight text-sage-cream sm:text-5xl">Mi cuenta</h1>
+        <p className="mt-3 text-base text-sage-ivory/55 sm:text-lg">
+          Gestiona tu perfil, pedidos y preferencias
         </p>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-4 lg:gap-10">
-        {/* Sidebar Navigation */}
-        <aside className="lg:col-span-1 animate-slide-in-left">
-          <Card variant="elevated" className="lg:sticky lg:top-24">
+        <aside className="animate-slide-in-left lg:col-span-1">
+          <Card variant="premium" className="lg:sticky lg:top-24">
             <CardContent className="p-6">
               <nav className="flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-2 lg:overflow-visible lg:pb-0">
                 {accountNavigation.map((item) => {
@@ -82,8 +77,8 @@ export default function AccountLayout({
                       className={cn(
                         'flex shrink-0 items-center gap-3 whitespace-nowrap rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 lg:w-full lg:text-base',
                         isActive
-                          ? 'bg-gradient-to-r from-primary to-primary/70 text-white shadow-lg shadow-primary/25'
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-gradient-to-r from-sage-gold/25 to-sage-gold/10 text-sage-gold ring-1 ring-sage-gold/30'
+                          : 'text-sage-ivory/70 hover:bg-sage-surface-light hover:text-sage-cream'
                       )}
                     >
                       <Icon className="h-5 w-5" />
@@ -92,13 +87,13 @@ export default function AccountLayout({
                   );
                 })}
 
-                <div className="pt-4 mt-4 border-t border-gray-100">
+                <div className="mt-4 border-t border-sage-surface-light/60 pt-4">
                   <button
                     onClick={handleLogout}
-                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-600 transition-all duration-200 hover:bg-red-50 lg:text-base"
+                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium text-red-400 transition-all duration-200 hover:bg-red-500/10 lg:text-base"
                   >
                     <LogOut className="h-5 w-5" />
-                    Cerrar sesión
+                    Cerrar sesion
                   </button>
                 </div>
               </nav>
@@ -106,8 +101,7 @@ export default function AccountLayout({
           </Card>
         </aside>
 
-        {/* Main Content */}
-        <main className="lg:col-span-3 animate-slide-in-right">{children}</main>
+        <main className="animate-slide-in-right lg:col-span-3">{children}</main>
       </div>
     </div>
   );

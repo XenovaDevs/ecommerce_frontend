@@ -2,10 +2,6 @@ import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import { ROUTES, APP_CONFIG } from '@/constants';
 
-/**
- * @ai-context Main footer component with links, contact info, and social media.
- */
-
 const footerLinks = {
   shop: {
     title: 'Tienda',
@@ -54,33 +50,38 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-gray-200 bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
+    <footer className="relative overflow-hidden bg-background">
+      {/* Gold top border */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-sage-gold/30 to-transparent" />
+
+      {/* Atmospheric glow */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[200px] rounded-full bg-sage-gold/[0.03] blur-[80px]" />
+
+      <div className="relative mx-auto max-w-7xl px-6 py-16 sm:px-8 lg:px-12">
+        <div className="grid grid-cols-2 gap-8 sm:gap-10 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand & Contact */}
-          <div className="sm:col-span-2 lg:col-span-1">
-            <Link href={ROUTES.HOME} className="text-xl font-bold text-primary">
-              {APP_CONFIG.SITE_NAME}
+          <div className="col-span-2 lg:col-span-1">
+            <Link href={ROUTES.HOME} className="group inline-block">
+              <span className="text-xl font-bold text-sage-cream tracking-tighter font-display">
+                {APP_CONFIG.SITE_NAME}
+              </span>
+              <span className="block mt-0.5 h-px w-0 group-hover:w-full bg-sage-gold transition-all duration-500" />
             </Link>
-            <p className="mt-4 text-sm text-gray-600">
-              {APP_CONFIG.SITE_DESCRIPTION}
+            <p className="mt-4 text-sm text-sage-ivory/50 leading-relaxed max-w-xs">
+              Perfumes de ambiente que transforman cada espacio en una experiencia sensorial única.
             </p>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Mail className="h-4 w-4" />
-                <a href="mailto:info@tienda.com" className="hover:text-primary">
-                  info@tienda.com
-                </a>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Phone className="h-4 w-4" />
-                <a href="tel:+5491112345678" className="hover:text-primary">
-                  +54 9 11 1234-5678
-                </a>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <MapPin className="h-4 w-4" />
-                <span>Buenos Aires, Argentina</span>
+            <div className="mt-6 space-y-2.5">
+              <a href="mailto:info@lepas-sage.com" className="flex items-center gap-2.5 text-sm text-sage-ivory/50 hover:text-sage-gold transition-colors group">
+                <Mail className="h-4 w-4 text-sage-gold/50 group-hover:text-sage-gold transition-colors" />
+                info@lepas-sage.com
+              </a>
+              <a href="tel:+5491112345678" className="flex items-center gap-2.5 text-sm text-sage-ivory/50 hover:text-sage-gold transition-colors group">
+                <Phone className="h-4 w-4 text-sage-gold/50 group-hover:text-sage-gold transition-colors" />
+                +54 9 11 1234-5678
+              </a>
+              <div className="flex items-center gap-2.5 text-sm text-sage-ivory/40">
+                <MapPin className="h-4 w-4 text-sage-gold/50" />
+                Buenos Aires, Argentina
               </div>
             </div>
           </div>
@@ -88,15 +89,15 @@ export function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([key, section]) => (
             <div key={key}>
-              <h3 className="text-sm font-semibold text-gray-900">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-sage-gold/70">
                 {section.title}
               </h3>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-4 space-y-2.5">
                 {section.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-600 hover:text-primary"
+                      className="text-sm text-sage-ivory/50 hover:text-sage-cream transition-colors duration-200"
                     >
                       {link.label}
                     </Link>
@@ -108,25 +109,27 @@ export function Footer() {
         </div>
 
         {/* Bottom section */}
-        <div className="mt-12 flex flex-col items-center justify-between border-t border-gray-200 pt-8 md:flex-row">
-          <p className="text-sm text-gray-500">
-            &copy; {currentYear} {APP_CONFIG.SITE_NAME}. Todos los derechos reservados.
-          </p>
+        <div className="mt-14 pt-8 border-t border-sage-surface-light/60">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+            <p className="text-xs text-sage-ivory/30">
+              &copy; {currentYear} {APP_CONFIG.SITE_NAME}. Todos los derechos reservados.
+            </p>
 
-          {/* Social links */}
-          <div className="mt-4 flex items-center gap-4 md:mt-0">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                className="text-gray-400 hover:text-primary"
-                aria-label={social.label}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <social.icon className="h-5 w-5" />
-              </a>
-            ))}
+            {/* Social links */}
+            <div className="flex items-center gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-sage-surface-light text-sage-ivory/40 hover:border-sage-gold/30 hover:text-sage-gold transition-all duration-300"
+                  aria-label={social.label}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <social.icon className="h-4 w-4" />
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </div>

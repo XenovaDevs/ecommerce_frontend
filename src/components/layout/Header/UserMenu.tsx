@@ -2,8 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Package, Heart, MapPin, Settings, LogOut } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { User, Package, Heart, MapPin, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { ROUTES } from '@/constants';
 import { UIMessages } from '@/messages';
@@ -62,11 +61,11 @@ export function UserMenu({ user }: UserMenuProps) {
       </Button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-lg border border-sage-surface-light bg-card py-1 shadow-elegant-lg">
           {/* User info */}
-          <div className="border-b border-gray-200 px-4 py-3">
-            <p className="text-sm font-medium text-gray-900">{user.full_name}</p>
-            <p className="text-xs text-gray-500">{user.email}</p>
+          <div className="border-b border-sage-surface-light px-4 py-3">
+            <p className="text-sm font-medium text-card-foreground">{user.full_name}</p>
+            <p className="text-xs text-sage-ivory/60">{user.email}</p>
           </div>
 
           {/* Menu items */}
@@ -76,7 +75,7 @@ export function UserMenu({ user }: UserMenuProps) {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="flex items-center gap-3 px-4 py-2 text-sm text-sage-ivory/75 transition-sophisticated hover:bg-sage-surface-light hover:text-sage-cream"
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
@@ -85,10 +84,10 @@ export function UserMenu({ user }: UserMenuProps) {
           </div>
 
           {/* Logout */}
-          <div className="border-t border-gray-200 py-1">
+          <div className="border-t border-sage-surface-light py-1">
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+              className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-400 transition-sophisticated hover:bg-red-500/10"
             >
               <LogOut className="h-4 w-4" />
               {UIMessages.AUTH.LOGOUT}

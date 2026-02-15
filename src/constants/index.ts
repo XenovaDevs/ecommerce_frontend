@@ -18,6 +18,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   CART_ID: 'cart_id',
   USER: 'user',
+  THEME_PREFERENCE: 'lps-theme-preference',
 } as const;
 
 export const QUERY_KEYS = {

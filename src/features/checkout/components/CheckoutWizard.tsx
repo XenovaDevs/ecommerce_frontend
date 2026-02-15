@@ -64,9 +64,9 @@ export function CheckoutWizard({
                 <div
                   className={cn(
                     'flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors',
-                    isActive && 'border-primary bg-primary text-white',
-                    isComplete && !isActive && 'border-green-500 bg-green-500 text-white',
-                    !isActive && !isComplete && 'border-gray-300 bg-white text-gray-400'
+                    isActive && 'border-sage-gold bg-sage-gold text-sage-black',
+                    isComplete && !isActive && 'border-green-500 bg-green-500 text-sage-black',
+                    !isActive && !isComplete && 'border-sage-surface-hover bg-sage-surface text-sage-ivory/40'
                   )}
                 >
                   {isComplete && !isActive ? (
@@ -78,9 +78,9 @@ export function CheckoutWizard({
                 <span
                   className={cn(
                     'mt-2 text-xs font-medium',
-                    isActive && 'text-primary',
-                    isComplete && !isActive && 'text-green-600',
-                    !isActive && !isComplete && 'text-gray-400'
+                    isActive && 'text-sage-gold',
+                    isComplete && !isActive && 'text-green-300',
+                    !isActive && !isComplete && 'text-sage-ivory/45'
                   )}
                 >
                   {step.label}
@@ -92,7 +92,7 @@ export function CheckoutWizard({
                 <div
                   className={cn(
                     'mx-2 h-0.5 w-12 sm:w-24',
-                    index < currentIndex ? 'bg-green-500' : 'bg-gray-300'
+                    index < currentIndex ? 'bg-green-500' : 'bg-sage-surface-hover'
                   )}
                 />
               )}
