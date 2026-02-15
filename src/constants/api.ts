@@ -51,6 +51,8 @@ export const API_ENDPOINTS = {
     GUEST_PROCESS: '/checkout/guest/process',
     GUEST_VALIDATE: '/checkout/guest/validate',
     GUEST_PAYMENT_METHODS: '/checkout/guest/payment-methods',
+    GUEST_PAYMENT_PREFERENCE: '/checkout/guest/payment-preference',
+    GUEST_ORDER: (orderNumber: string) => `/checkout/guest/order/${orderNumber}`,
     SHIPPING_QUOTE: '/shipping/quote',
     PAYMENT_PREFERENCE: '/checkout/payment-preference',
   },

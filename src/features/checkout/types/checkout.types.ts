@@ -45,7 +45,7 @@ export interface ShippingAddressForm {
   state: string;
   postal_code: string;
   country: string;
-  phone: string;
+  phone?: string;
   is_default?: boolean;
 }
 

@@ -75,6 +75,19 @@ class CheckoutService {
   }
 
   /**
+   * Create Mercado Pago preference for a guest order using order number.
+   * Backend route: POST /checkout/guest/payment-preference
+   */
+  async createGuestPaymentPreference(orderNumber: string): Promise<MercadoPagoPreference> {
+    const response = await apiClient.post<{ data: MercadoPagoPreference }>(
+      API_ENDPOINTS.CHECKOUT.GUEST_PAYMENT_PREFERENCE,
+      { order_number: orderNumber }
+    );
+
+    return response.data.data;
+  }
+
+  /**
    * Process checkout and create order
    * Backend route: POST /checkout
    * Returns { order, payment_url }
@@ -118,6 +131,17 @@ class CheckoutService {
   async getOrderByNumber(orderNumber: string): Promise<Order> {
     const response = await apiClient.get<OrderResponse>(
       `${API_ENDPOINTS.ORDERS.LIST}/number/${orderNumber}`
+    );
+    return response.data.data;
+  }
+
+  /**
+   * Get guest order by order number (public, no auth required)
+   * Backend route: GET /checkout/guest/order/{orderNumber}
+   */
+  async getGuestOrderByNumber(orderNumber: string): Promise<Order> {
+    const response = await apiClient.get<OrderResponse>(
+      API_ENDPOINTS.CHECKOUT.GUEST_ORDER(orderNumber)
     );
     return response.data.data;
   }

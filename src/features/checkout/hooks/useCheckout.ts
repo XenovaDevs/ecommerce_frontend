@@ -172,8 +172,9 @@ export function useCheckout({ isGuestCheckout = false }: UseCheckoutOptions = {}
 
       const order = result.order;
 
-      // If backend returned a payment URL (MercadoPago), redirect to it
+      // If backend returned a payment URL (MercadoPago), clear cart and redirect
       if (result.payment_url) {
+        clearCart();
         window.location.href = result.payment_url;
         return order;
       }

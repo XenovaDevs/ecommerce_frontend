@@ -107,7 +107,7 @@ export function ReviewStep({
             <p>
               {shippingAddress.city}, {shippingAddress.state} {shippingAddress.postal_code}
             </p>
-            <p>{shippingAddress.phone}</p>
+            {shippingAddress.phone && <p>{shippingAddress.phone}</p>}
           </div>
         </CardContent>
       </Card>

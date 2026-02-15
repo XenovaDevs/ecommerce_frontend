@@ -25,10 +25,14 @@ const themeIcons: Record<ThemePreference, ComponentType<{ className?: string }>>
 const toggleOptions: ThemePreference[] = ['system', 'dark', 'light'];
 
 export function ThemeToggle({ compact = true, className }: ThemeToggleProps) {
-  const { themePreference, resolvedTheme, setThemePreference, cycleTheme } = useTheme();
+  const { themePreference, resolvedTheme, mounted, setThemePreference, cycleTheme } = useTheme();
 
-  const ThemeIcon = themeIcons[themePreference];
-  const buttonLabel = `Tema: ${themeLabels[themePreference]} (actual: ${themeLabels[resolvedTheme]})`;
+  // Use SSR-safe defaults until mounted to prevent hydration mismatch
+  const displayPreference = mounted ? themePreference : 'system';
+  const displayResolved = mounted ? resolvedTheme : 'dark';
+
+  const ThemeIcon = themeIcons[displayPreference];
+  const buttonLabel = `Tema: ${themeLabels[displayPreference]} (actual: ${themeLabels[displayResolved]})`;
 
   if (compact) {
     return (

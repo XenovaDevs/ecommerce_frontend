@@ -22,7 +22,10 @@ const shippingSchema = z.object({
   state: z.string().min(2, ValidationMessages.min(2)),
   postal_code: z.string().min(4, ValidationMessages.postalCode),
   country: z.string().min(1),
-  phone: z.string().min(8, ValidationMessages.phone),
+  phone: z
+    .string()
+    .optional()
+    .refine((value) => !value || value.trim().length >= 8, ValidationMessages.phone),
 });
 
 type ShippingFormData = z.infer<typeof shippingSchema>;
@@ -107,6 +110,9 @@ export function ShippingStep({
               className={fieldClassName}
               containerClassName={fieldContainerClassName}
             />
+            <p className="text-xs text-sage-ivory/45">
+              Usaremos este email para avisarte el estado de pago y confirmacion del pedido.
+            </p>
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="sm:col-span-2">
@@ -166,7 +172,7 @@ export function ShippingStep({
             </div>
 
             <Input
-              label="Telefono"
+              label="Telefono (opcional)"
               type="tel"
               {...register('phone')}
               error={errors.phone?.message}

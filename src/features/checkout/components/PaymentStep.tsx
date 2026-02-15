@@ -86,7 +86,7 @@ export function PaymentStep({
             <div className="mt-6 rounded-lg border border-sage-surface-hover bg-sage-surface-light p-4">
               <p className="text-sm text-sage-ivory/70">
                 Te enviaremos los datos bancarios por email despues de confirmar el pedido.
-                Tu pedido quedara reservado por 48 horas.
+                Tu pedido quedara pendiente y se cancelara automaticamente en 24 horas si no se acredita el pago.
               </p>
             </div>
           )}

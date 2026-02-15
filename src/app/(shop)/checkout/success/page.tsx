@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CheckCircle, Package, ArrowRight } from 'lucide-react';
 import { Button, Card, CardContent } from '@/components/ui';
 import { ROUTES } from '@/constants';
+import { useAuth } from '@/features/auth';
 import { checkoutService } from '@/features/checkout/services';
 import type { Order } from '@/features/checkout/types';
 import { formatCurrency } from '@/lib/utils';
@@ -15,12 +16,15 @@ export const dynamic = 'force-dynamic';
 function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const orderNumber = searchParams.get('order');
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchOrder = async () => {
       if (!orderNumber) {
         setError('No se encontro el numero de pedido');
@@ -29,7 +33,9 @@ function CheckoutSuccessContent() {
       }
 
       try {
-        const orderData = await checkoutService.getOrderByNumber(orderNumber);
+        const orderData = isAuthenticated
+          ? await checkoutService.getOrderByNumber(orderNumber)
+          : await checkoutService.getGuestOrderByNumber(orderNumber);
         setOrder(orderData);
       } catch (err) {
         console.error('Error fetching order:', err);
@@ -40,7 +46,7 @@ function CheckoutSuccessContent() {
     };
 
     fetchOrder();
-  }, [orderNumber]);
+  }, [orderNumber, isAuthenticated, authLoading]);
 
   if (isLoading) {
     return (
@@ -178,12 +184,12 @@ function CheckoutSuccessContent() {
         </Card>
 
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Link href={ROUTES.ORDERS} className="flex-1">
+          <Link href={isAuthenticated ? ROUTES.ORDERS : ROUTES.HOME} className="flex-1">
             <Button
               variant="outline"
               className="w-full border-sage-surface-hover text-sage-cream hover:border-sage-gold/40 hover:text-sage-gold"
             >
-              Ver mis pedidos
+              {isAuthenticated ? 'Ver mis pedidos' : 'Volver al inicio'}
             </Button>
           </Link>
           <Link href={ROUTES.PRODUCTS} className="flex-1">

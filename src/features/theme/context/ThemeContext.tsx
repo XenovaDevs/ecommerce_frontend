@@ -24,6 +24,7 @@ const THEME_SET = new Set<ThemePreference>(THEME_PREFERENCES);
 interface ThemeContextValue {
   themePreference: ThemePreference;
   resolvedTheme: ResolvedTheme;
+  mounted: boolean;
   setThemePreference: (theme: ThemePreference) => void;
   cycleTheme: () => void;
 }
@@ -94,13 +95,11 @@ interface ThemeProviderProps {
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(() =>
-    readStoredPreference()
-  );
-  const prefersDark = useMediaQuery(
-    THEME_MEDIA_QUERY,
-    getInitialResolvedTheme() === 'dark'
-  );
+  // Start with SSR-safe defaults, then sync on mount
+  const [mounted, setMounted] = useState(false);
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>('system');
+  const prefersDark = useMediaQuery(THEME_MEDIA_QUERY, true);
+
   const resolvedTheme = useMemo<ResolvedTheme>(() => {
     if (themePreference === 'system') {
       return prefersDark ? 'dark' : 'light';
@@ -109,13 +108,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     return themePreference;
   }, [prefersDark, themePreference]);
 
+  // Sync stored preference on mount
+  useEffect(() => {
+    setThemePreferenceState(readStoredPreference());
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     applyResolvedTheme(resolvedTheme);
   }, [resolvedTheme]);
 
   useEffect(() => {
-    persistPreference(themePreference);
-  }, [themePreference]);
+    if (mounted) {
+      persistPreference(themePreference);
+    }
+  }, [themePreference, mounted]);
 
   const setThemePreference = useCallback((theme: ThemePreference) => {
     setThemePreferenceState(theme);
@@ -133,10 +140,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     () => ({
       themePreference,
       resolvedTheme,
+      mounted,
       setThemePreference,
       cycleTheme,
     }),
-    [cycleTheme, resolvedTheme, setThemePreference, themePreference]
+    [cycleTheme, mounted, resolvedTheme, setThemePreference, themePreference]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
