@@ -77,27 +77,13 @@ const applyResolvedTheme = (theme: ResolvedTheme): void => {
   root.style.colorScheme = theme;
 };
 
-const getInitialResolvedTheme = (): ResolvedTheme => {
-  if (typeof window === 'undefined') {
-    return 'dark';
-  }
-
-  const currentTheme = document.documentElement.dataset.theme;
-  if (currentTheme === 'dark' || currentTheme === 'light') {
-    return currentTheme;
-  }
-
-  return window.matchMedia(THEME_MEDIA_QUERY).matches ? 'dark' : 'light';
-};
-
 interface ThemeProviderProps {
   children: ReactNode;
 }
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  // Start with SSR-safe defaults, then sync on mount
-  const [mounted, setMounted] = useState(false);
-  const [themePreference, setThemePreferenceState] = useState<ThemePreference>('system');
+  const mounted = true;
+  const [themePreference, setThemePreferenceState] = useState<ThemePreference>(() => readStoredPreference());
   const prefersDark = useMediaQuery(THEME_MEDIA_QUERY, true);
 
   const resolvedTheme = useMemo<ResolvedTheme>(() => {
@@ -108,21 +94,13 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     return themePreference;
   }, [prefersDark, themePreference]);
 
-  // Sync stored preference on mount
-  useEffect(() => {
-    setThemePreferenceState(readStoredPreference());
-    setMounted(true);
-  }, []);
-
   useEffect(() => {
     applyResolvedTheme(resolvedTheme);
   }, [resolvedTheme]);
 
   useEffect(() => {
-    if (mounted) {
-      persistPreference(themePreference);
-    }
-  }, [themePreference, mounted]);
+    persistPreference(themePreference);
+  }, [themePreference]);
 
   const setThemePreference = useCallback((theme: ThemePreference) => {
     setThemePreferenceState(theme);

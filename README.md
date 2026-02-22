@@ -23,6 +23,32 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Production Self-Hosting (PM2 + Nginx)
+
+Build with standalone output:
+
+```bash
+pnpm build
+```
+
+Optional environment variables for deployment behind subpath/domain:
+
+```bash
+NEXT_PUBLIC_API_URL=https://demo.xenova.com.ar/api/v1
+NEXT_PUBLIC_APP_BASE_PATH=/shop
+```
+
+If you deploy at domain root, leave `NEXT_PUBLIC_APP_BASE_PATH` empty.
+
+Start with PM2 (uses `ecosystem.config.cjs`):
+
+```bash
+pm2 start ecosystem.config.cjs
+pm2 save
+```
+
+Nginx should reverse proxy to `127.0.0.1:3000`.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
